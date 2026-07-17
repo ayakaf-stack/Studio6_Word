@@ -108,3 +108,7 @@ def like_word(word_id):
 def like_text(text_id):
 
     return redirect(request.referrer or url_for('index'))
+
+
+if __name__ == "__main__":
+    app.run(debug=True)
