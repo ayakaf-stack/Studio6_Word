@@ -30,6 +30,10 @@ def login():
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     if request.method == 'POST':
+        user_name = request.form.get('user_name', '').strip()
+        email = request.form.get('email', '').strip()
+        password = request.form.get('password', '').strip()
+
 
         return redirect(url_for('login'))
 
