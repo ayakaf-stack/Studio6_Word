@@ -54,13 +54,7 @@
 
 ## システム構成
 
-Browser
-↓
-Flask
-↓
-SQLAlchemy
-↓
-MySQL
+Browser→Flask→SQLAlchemy→MySQL
 
 ---
 
