@@ -34,7 +34,22 @@ def register():
         email = request.form.get('email', '').strip()
         password = request.form.get('password', '').strip()
 
+        # 未入力チェック
+        if not user_name or not email or not password:
+            flash("全ての項目を正しく入力してください")
+            return redirect(url_for('register'))
+        
+        # パスワード文字数チェック
+        if len(password) < 8 or len(password) > 16:
+            flash("パスワードは8文字以上16文字以内で入力してください")
+            return redirect(url_for('register'))
 
+        # ユーザー名文字数チェック
+        if len(user_name) > 255:
+            flash("ユーザー名は255文字以内で入力してください")
+            return redirect(url_for('register'))
+
+        flash("新規登録が完了しました")
         return redirect(url_for('login'))
 
     return render_template('register.html')
