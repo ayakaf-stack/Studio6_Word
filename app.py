@@ -1,15 +1,14 @@
 from flask import Flask, render_template,redirect,session,flash,url_for,request
 from models.models import Word,Genre,Word_genre,User,Text,Good_word,Good_text
 from models.extensions import db
-
-from werkzeug.security import generate_password_hash
-from models.models import User
-from models.extensions import db
+import re
+from werkzeug.security import generate_password_hash, check_password_hash
 
 app = Flask(__name__)
 app.config["SQLALCHEMY_DATABASE_URI"] = (
     "mysql+pymysql://flaskUser:flaskPass@localhost/word_app"
 )
+app.config["SECRET_KEY"] = ("your-secret-key")
 
 db.init_app(app)
 
@@ -28,7 +27,7 @@ def login():
         
         return redirect(url_for('index'))
 
-    return render_template('login.html')
+    return render_template('register.html')
 
 
 # 新規登録
@@ -49,6 +48,11 @@ def register():
             flash("ユーザー名は255文字以内で入力してください")
             return redirect(url_for('register'))
         
+        # メールアドレス形式チェック
+        if not re.fullmatch(r"^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$", email):
+            flash("既に登録済みのメールアドレスか不正なメールアドレスです")
+            return redirect(url_for("register"))
+
         # メールアドレス重複チェック
         user = User.query.filter_by(email=email).first()
         if user:
@@ -60,6 +64,7 @@ def register():
             flash("パスワードは8文字以上16文字以内で入力してください")
             return redirect(url_for('register'))
         
+        # パスワードをハッシュ化
         password_hash = generate_password_hash(password)
 
         # ユーザー登録
@@ -150,3 +155,6 @@ def like_word(word_id):
 def like_text(text_id):
 
     return redirect(request.referrer or url_for('index'))
+
+if __name__ == "__main__":
+    app.run(debug=True)

@@ -1,0 +1,35 @@
+<h1>マイページ</h1>
+
+<h2>{{ user.user_name }}</h2>
+
+<h2>いいね一覧</h2>
+
+<h3>いいねした単語</h3>
+<ul>
+{% for word in good_words %}
+    <li>{{ word.word.word }}</li>
+{% endfor %}
+</ul>
+
+<h3>いいねした文章</h3>
+<ul>
+{% for text in good_texts %}
+    <li>{{ text.text.title }}</li>
+{% endfor %}
+</ul>
+
+<hr>
+
+<h2>作成した文章一覧</h2>
+
+{% for text in texts %}
+
+<button class="drawer-btn">
+    {{ text.title }}
+</button>
+
+<div class="drawer">
+    <p>{{ text.body }}</p>
+</div>
+
+{% endfor %}
