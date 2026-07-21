@@ -1,6 +1,11 @@
 from flask import Flask, render_template,redirect,session,flash,url_for,request
 from models.models import Word,Genre,Word_genre,User,Text,Good_word,Good_text
 from models.extensions import db
+
+from werkzeug.security import generate_password_hash
+from models.models import User
+from models.extensions import db
+
 app = Flask(__name__)
 app.config["SQLALCHEMY_DATABASE_URI"] = (
     "mysql+pymysql://flaskUser:flaskPass@localhost/word_app"
@@ -39,15 +44,33 @@ def register():
             flash("全ての項目を正しく入力してください")
             return redirect(url_for('register'))
         
-        # パスワード文字数チェック
-        if len(password) < 8 or len(password) > 16:
-            flash("パスワードは8文字以上16文字以内で入力してください")
-            return redirect(url_for('register'))
-
         # ユーザー名文字数チェック
         if len(user_name) > 255:
             flash("ユーザー名は255文字以内で入力してください")
             return redirect(url_for('register'))
+        
+        # メールアドレス重複チェック
+        user = User.query.filter_by(email=email).first()
+        if user:
+            flash("既に登録済みのメールアドレスか不正なメールアドレスです")
+            return redirect(url_for('register'))
+        
+        # パスワード文字数チェック
+        if len(password) < 8 or len(password) > 16:
+            flash("パスワードは8文字以上16文字以内で入力してください")
+            return redirect(url_for('register'))
+        
+        password_hash = generate_password_hash(password)
+
+        # ユーザー登録
+        user = User(
+             user_name=user_name,
+            email=email,
+            password_hash=password_hash
+         )
+        
+        db.session.add(user)
+        db.session.commit()
 
         flash("新規登録が完了しました")
         return redirect(url_for('login'))
