@@ -18,3 +18,28 @@ body {
   display:block;
   clear:both;
 }
+
+.titlearea {
+    width: 100%;
+    max-width: 500px;
+    resize: none;
+}
+
+.textarea {
+    width: 100%;
+    max-width: 500px;
+    height: 150px;
+    resize: none;
+}
+
+.form-group {
+    display:flexbox;
+    justify-content: center;
+    gap: 2rem 0;
+    align-items: center;
+}
+
+.form-actions {
+  margin: 2rem 0;
+}
+

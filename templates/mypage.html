@@ -1,39 +1,66 @@
 {% extends "base.html" %}
 {% block title %}マイページ{% endblock %}
 {% block css %}
-    <link rel="stylesheet" href="{{ url_for('static', filename='mypage.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/mypage.css') }}">
 {% endblock %}
 {% block main %}
-    <h1>{{user_name}}のマイページ</h1>
-    <div class="contents">
-        いいねした単語
-        {% for word in words %}
-            {{word.word}}
-            <a href="{{ url_for('text_new',id=word.id) }}">文章作成</a>
-        {% endfor %}
-        <br>
-        いいねした文章
-        {% for text in texts %}
-            {{text.title}}
-        {% endfor %}
-        <br>
-        <br>
-        作成した文章
-        {% for text,good in user_texts.items() %}
-            文章タイトル:{{text.title}} <br>
-            文章本文:{{text.main_text}} <br>
-            文章のいいね数:{{good}} <br>
-            文章ステータス
-            {% if text.text_status == 0 %}
-                公開 <br>
-            {% else %}
-                非公開 <br>
-            {% endif %}
-            <a href="{{ url_for('text_edit',id=text.id) }}">文章編集</a>
-        {% endfor %}
+    <script src="{{ url_for('static', filename='js/good.js') }}" defer></script>
+    <h1>マイページ</h1>
+    <h2>ログインユーザー：{{user.user_name}}</h2>
+    <div class="container">
+        <div class="item">
+            <h2>いいねした単語</h2>
+            <ul id="liked_list">
+                {% for word in liked_words %}
+                    <li class="good_word_item">
+                        単語:{{ word.word }} <br>
+                        読み:{{ word.reading }} <br>
+                        意味:{{ word.mean }} <br>
+
+                        <form class="good-form" action="{{ url_for('good_word', word_id=word.id) }}" method="POST">
+                            <button type="submit" class="good-button">❤️</button>
+                        </form>
+
+                        <a href="{{ url_for('text_new', id=word.id) }}">文章作成</a>
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+        <div class="item">
+            <h2>いいねした文章</h2>
+            <ul id="liked_list">
+                {% for text in liked_texts %}
+                    <li class="good_text_item">
+                        文章タイトル:{{ text.title }} <br>
+                        文章本文:{{ text.main_text }} <br>
+
+                        <form class="good-form" action="{{ url_for('good_text', text_id=text.id) }}" method="POST">
+                            <button type="submit" class="good-button">❤️</button>
+                        </form>
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+        <div class="item">
+            <h2>作成した文章</h2>
+            <ul id="my_texts_list">
+                {% for text, good_count in my_texts_data %}
+                    <li class="my_text_item">
+                        文章タイトル:{{ text.title }} <br>
+                        文章本文:{{ text.main_text }} <br>
+                        いいね数:{{ good_count }} <br>
+                        公開ステータス:{{ '公開' if text.text_status == 0 else '非公開' }} <br>
+
+                        <a href="{{ url_for('text_edit', id=text.id) }}">編集</a>
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
     </div>
-    <br>
-    <a href="{{ url_for('logout') }}">ログアウト</a>
-    <a href="/unregister">退会</a>
-    <a href="/">TOP</a>
+    <div class="menu">
+        <a href="{{ url_for('logout') }}">ログアウト</a>
+        <a href="/unregister">退会</a>
+        <a href="/">TOP</a>
+    </div>
 {% endblock %}
