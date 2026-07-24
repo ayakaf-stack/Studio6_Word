@@ -1,6 +1,6 @@
 import os,re
 from random import choice
-from flask import Flask, render_template,redirect,session,flash,url_for,request
+from flask import Flask, render_template,redirect,session,flash,url_for,request,jsonify
 from models.models import Word,Genre,Word_genre,User,Text,Good_word,Good_text
 from models.extensions import db
 from werkzeug.security import generate_password_hash,check_password_hash
@@ -26,31 +26,42 @@ def index():
     # wordsから単語をランダムに抽出
     random_word = choice(words)
 
-    # ワードのいいね数をカウント
-    like_words = len(Good_word.query.filter_by(word_id=random_word.id).all())
-
     # ワードに紐づいたtextsを抽出
     texts = Text.query.filter(
         Text.main_text.contains(random_word.word),
         Text.text_status == 0
     ).all()
 
-    # textsのいいね数をカウント
-    like_texts = []
-    for text in texts:
-        like_texts.append(len(text.goods))
-    
-    # 各textsといいね数をzipで紐付け
-    texts_contents = dict(zip(texts,like_texts))
-
     # ログイン判定
     is_login = 'user_id' in session
+
+    # 各textのいいね数といいね済みかどうかをまとめて取得
+    texts_data = []
+    for text in texts:
+        good_count_text = len(text.goods)
+        is_good_text = False
+
+        if is_login:
+            like = Good_text.query.filter_by(text_id=text.id, user_id=session['user_id']).first()
+            is_good_text = bool(like)
+        texts_data.append((good_count_text, is_good_text))
+
+    # 各textsとデータ(件数, いいね済みか)をzipで紐付け
+    texts_contents = dict(zip(texts, texts_data))
+    is_good = False
+    if is_login:
+        like = Good_word.query.filter_by(word_id=random_word.id, user_id=session['user_id']).first()
+        is_good = bool(like)
+
+    good_count = Good_word.query.filter_by(word_id=random_word.id).count()
+
     return render_template(
         'top.html',
         word = random_word,
-        like_word = like_words,
         text = texts_contents,
-        is_login = is_login
+        is_login = is_login,
+        is_good = is_good,
+        good_count = good_count
     )
 
 
@@ -128,44 +139,44 @@ def register():
 
 
 # マイページ
-@app.route('/mypage')
+@app.route('/mypage', methods=['GET'])
 def mypage():
+    # ログインチェック
     if 'user_id' not in session:
+        flash('ログインが必要です')
         return redirect(url_for('login'))
-    # ユーザーネームを取得
-    user_name = session['user_name']
-    my_id = session['user_id']
 
-    # ユーザーがいいねしたワードを表示
-    good_words = Good_word.query.filter_by(user_id=my_id).all()
-    word_ids = [good.word_id for good in good_words]
-    words = Word.query.filter(Word.id.in_(word_ids)).all()
+    user_id = session['user_id']
+    user = User.query.get_or_404(user_id)
 
-    # ユーザーがいいねした文章を表示
-    good_texts = Good_text.query.filter_by(user_id=my_id).all()
-    text_ids = [good.text_id for good in good_texts]
-    texts = Text.query.filter(Text.id.in_(text_ids)).all()
-    
-    
-    # ユーザーが作成した文章を表示
-    user_texts = Text.query.filter_by(user_id=my_id)
+    # --- いいねした単語一覧 ---
+    good_words = Good_word.query.filter_by(user_id=user_id).all()
+    liked_words = []
+    for gw in good_words:
+        word = Word.query.get(gw.word_id)
+        liked_words.append(word)
 
-    # textsのいいね数をカウント
-    like_texts = []
-    for text in user_texts:
-        like_texts.append(len(text.goods))
-    
-    # 各textsといいね数をzipで紐付け
-    texts_contents = dict(zip(user_texts,like_texts))
+    # --- いいねした文章一覧 ---
+    good_texts = Good_text.query.filter_by(user_id=user_id).all()
+    liked_texts = []
+    for gt in good_texts:
+        text = Text.query.get(gt.text_id)
+        liked_texts.append(text)
+
+    # --- 自分が作成した文章一覧(いいね数つき) ---
+    my_texts = Text.query.filter_by(user_id=user_id).all()
+    my_texts_data = []
+    for text in my_texts:
+        good_count = len(text.goods)
+        my_texts_data.append((text, good_count))
 
     return render_template(
         'mypage.html',
-        user_name = user_name,
-        words = words,
-        texts = texts,
-        user_texts = texts_contents
+        user=user,
+        liked_words=liked_words,
+        liked_texts=liked_texts,
+        my_texts_data=my_texts_data
     )
-
 
 # ログアウト
 @app.route('/logout')
@@ -385,18 +396,59 @@ def text_delete(id):
 
 
 # 単語いいね登録・解除
-@app.route('/like/word/<int:word_id>', methods=['POST'])
-def like_word(word_id):
+@app.route('/good/word/<int:word_id>', methods=['POST'])
+def good_word(word_id):
+    # 未ログインフラッシュメッセージ
     if 'user_id' not in session:
-        flash('いいね機能を使うにはログインしてください')
-    return redirect(request.referrer or url_for('index'))
+        return jsonify({"error": "いいね機能を使うにはログインしてください"}), 401
+
+    # ユーザーID取得
+    user_id = session['user_id']
+
+    # ユーザーのいいね状態取得、更新
+    like = Good_word.query.filter_by(word_id=word_id, user_id=user_id).first()
+    if like:
+        db.session.delete(like)
+        is_good = False
+    else:
+        new_like = Good_word(word_id=word_id,user_id=user_id)
+        db.session.add(new_like)
+        is_good = True
+    db.session.commit()
+
+    # いいね数取得
+    good_count = Good_word.query.filter_by(word_id=word_id).count()
+
+    return jsonify({"is_good":is_good, "good_count":good_count})
+    
+        
 
 
 # 文章いいね登録・解除
-@app.route('/like/text/<int:text_id>', methods=['POST'])
-def like_text(text_id):
+@app.route('/good/text/<int:text_id>', methods=['POST'])
+def good_text(text_id):
+    # 未ログインフラッシュメッセージ
+    if 'user_id' not in session:
+        return jsonify({"error":"いいね機能を使うにはログインしてください"}),401
 
-    return redirect(request.referrer or url_for('index'))
+    # ユーザーID取得
+    user_id = session['user_id']
+
+    # ユーザーのいいね状態取得、更新
+    like = Good_text.query.filter_by(text_id=text_id,user_id=user_id).first()
+    if like:
+        db.session.delete(like)
+        is_good = False
+    else:
+        new_like = Good_text(text_id=text_id,user_id=user_id)
+        db.session.add(new_like)
+        is_good = True
+    db.session.commit()
+
+    # いいね数取得
+    good_count = Good_text.query.filter_by(text_id=text_id).count()
+
+    return jsonify({"is_good":is_good, "good_count":good_count})
 
 
 if __name__ == "__main__":
