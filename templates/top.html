@@ -1,20 +1,24 @@
-単語:{{word.word}} <br>
-読み:{{word.reading}} <br>
-意味:{{word.mean}} <br>
-単語のいいね数:{{like_word}} <br>
-<a href="{{ url_for('text_new',id=word.id) }}">文章作成</a>
-<br>
-{% for text,good in text.items() %}
-    文章タイトル:{{text.title}} <br>
-    文章本文:{{text.main_text}} <br>
-    文章のいいね数:{{good}} <br>
+{% extends "base.html" %}
+{% block title %}トップページ{% endblock %}
+{% block main %}
+    単語:{{word.word}} <br>
+    読み:{{word.reading}} <br>
+    意味:{{word.mean}} <br>
+    単語のいいね数:{{like_word}} <br>
+    <a href="{{ url_for('text_new',id=word.id) }}">文章作成</a>
     <br>
-{% endfor %}
+    {% for text,good in text.items() %}
+        文章タイトル:{{text.title}} <br>
+        文章本文:{{text.main_text}} <br>
+        文章のいいね数:{{good}} <br>
+        <br>
+    {% endfor %}
 
-{% if is_login%}
-    <a href="/mypage">マイページ</a>
-    <a href="/logout">ログアウト</a>
-{% else %}
-    <a href="/register">新規登録</a>
-    <a href="/login">ログイン</a>
-{% endif %}
+    {% if is_login%}
+        <a href="/mypage">マイページ</a>
+        <a href="/logout">ログアウト</a>
+    {% else %}
+        <a href="/register">新規登録</a>
+        <a href="/login">ログイン</a>
+    {% endif %}
+{% endblock %}

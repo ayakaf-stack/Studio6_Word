@@ -4,11 +4,21 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>美しい日本語</title>
+    {% block css %}{% endblock %}
 </head>
 <body>
-    <header><p class="text-center">美しい日本語</p></header>
+    <header>
+        <a href="/">美しい日本語</a></header>
     <main>
-        {% block main %}{% endblock %}
+        {% block main %}
+            {% with messages = get_flashed_messages() %}
+                {% if messages %}
+                    {% for message in messages %}
+                        <p>{{message}}</p>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+        {% endblock %}
     </main>
     <footer><p class="text-center">&copy;Studio6</p></footer>
 </body>
