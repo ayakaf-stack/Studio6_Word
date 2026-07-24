@@ -1,24 +1,48 @@
-{% extends "base.html" %}
-{% block title %}トップページ{% endblock %}
-{% block main %}
-    単語:{{word.word}} <br>
-    読み:{{word.reading}} <br>
-    意味:{{word.mean}} <br>
-    単語のいいね数:{{like_word}} <br>
-    <a href="{{ url_for('text_new',id=word.id) }}">文章作成</a>
-    <br>
-    {% for text,good in text.items() %}
-        文章タイトル:{{text.title}} <br>
-        文章本文:{{text.main_text}} <br>
-        文章のいいね数:{{good}} <br>
-        <br>
-    {% endfor %}
+<script src="{{ url_for('static', filename='js/good.js') }}" defer></script>
 
-    {% if is_login%}
-        <a href="/mypage">マイページ</a>
-        <a href="/logout">ログアウト</a>
-    {% else %}
-        <a href="/register">新規登録</a>
-        <a href="/login">ログイン</a>
-    {% endif %}
-{% endblock %}
+単語:{{word.word}} <br>
+読み:{{word.reading}} <br>
+意味:{{word.mean}} <br>
+
+<form class="good-form"
+      action="{{ url_for('good_word', word_id=word.id) }}"
+      method="POST">
+
+    <button type="submit" class="good-button">
+        {{ '❤️' if is_good else '🤍' }}
+    </button>
+
+    <span class="good-count">
+        {{ good_count }}
+    </span>
+
+</form>
+
+<a href="{{ url_for('text_new',id=word.id) }}">文章作成</a>
+<br>
+{% for text, good_data in text.items() %}
+    文章タイトル:{{text.title}} <br>
+    文章本文:{{text.main_text}} <br>
+    <form class="good-form"
+      action="{{ url_for('good_text', text_id=text.id) }}"
+      method="POST">
+
+    <button type="submit" class="good-button">
+        {{ '❤️' if good_data[1] else '🤍' }}
+    </button>
+
+    <span class="good-count">
+        {{ good_data[0] }}
+    </span>
+
+    </form>
+    <br>
+{% endfor %}
+
+{% if is_login%}
+    <a href="/mypage">マイページ</a>
+    <a href="/logout">ログアウト</a>
+{% else %}
+    <a href="/register">新規登録</a>
+    <a href="/login">ログイン</a>
+{% endif %}

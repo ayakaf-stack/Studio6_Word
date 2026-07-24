@@ -1,0 +1,58 @@
+@charset "UTF-8";
+
+html {
+  font-family:"ヒラギノ明朝 ProN", "Hiragino Mincho ProN", serif;
+  color: white;
+  background-color: #062c54;
+  text-align: center;
+}
+
+body {
+  font-size:1.4rem;
+}
+*, *::before, *::after {
+  box-sizing:border-box;
+}
+.clearfix::after {
+  content:'';
+  display:block;
+  clear:both;
+}
+
+.form {
+  width: 500px;
+  margin: 50px auto;
+}
+
+.form-group {
+  display: flex;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.form-group label {
+  width: 200px;
+  text-align: right;
+  margin-right: 20px;
+}
+
+.form-group input {
+  flex: 1;
+  padding: 8px;
+}
+
+input::placeholder {
+  color: #b0b0b0;
+  opacity: 1;
+}
+
+button {
+  background-color: #999;
+  border: 1px solid #999;
+}
+
+button:hover {
+  border-color: #999;
+  background-color: #646364;
+}
+

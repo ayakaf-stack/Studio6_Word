@@ -3,6 +3,9 @@
 html {
     color: white;
     font-family:"ヒラギノ明朝 ProN", "Hiragino Mincho ProN", serif;
+    margin: 0;
+	  padding: 0;
+	  box-sizing: border-box;
 }
 
 body {
@@ -17,6 +20,21 @@ body {
   clear:both;
 }
 
+.header {
+  font-size:2rem;
+}
+
+a:visited{
+    color: #e6b422;
+}
+
+a:hover {
+    opacity: 0.7;
+}
+
 a {
   color: #e6b422;
+  transition: 0.3s;
+  text-decoration: none;
+  display: block;
 }
