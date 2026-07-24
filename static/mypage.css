@@ -1,10 +1,12 @@
 @charset "UTF-8";
 
 html {
-    color: white;
-    font-family:"ヒラギノ明朝 ProN", "Hiragino Mincho ProN", serif;
+  font-size:62.5%;
+  font-family:"ヒラギノ明朝 ProN", "Hiragino Mincho ProN", serif;
+  color: white;
+  background-color: #062c54;
+  text-align: center;
 }
-
 body {
   font-size:1.4rem;
 }
@@ -15,8 +17,4 @@ body {
   content:'';
   display:block;
   clear:both;
-}
-
-a {
-  color: #e6b422;
 }
