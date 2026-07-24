@@ -1,0 +1,31 @@
+<h1>{{user_name}}のマイページ</h1>
+
+いいねした単語
+{% for word in words %}
+    {{word.word}}
+    <a href="{{ url_for('text_new',id=word.id) }}">文章作成</a>
+{% endfor %}
+<br>
+いいねした文章
+{% for text in texts %}
+    {{text.title}}
+{% endfor %}
+<br>
+<br>
+作成した文章
+{% for text,good in user_texts.items() %}
+    文章タイトル:{{text.title}} <br>
+    文章本文:{{text.main_text}} <br>
+    文章のいいね数:{{good}} <br>
+    文章ステータス
+    {% if text.text_status == 0 %}
+        公開 <br>
+    {% else %}
+        非公開 <br>
+    {% endif %}
+    <a href="{{ url_for('text_edit',id=text.id) }}">文章編集</a>
+{% endfor %}
+<br>
+<a href="{{ url_for('logout') }}">ログアウト</a>
+<a href="/unregister">退会</a>
+<a href="/">TOP</a>

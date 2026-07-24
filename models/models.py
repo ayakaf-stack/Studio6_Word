@@ -103,7 +103,9 @@ class User(db.Model):
         nullable=False
     )
 
-    texts = db.relationship('Text')
+    good_words = db.relationship("Good_word",cascade='all, delete-orphan')
+    good_texts = db.relationship("Good_text",cascade='all,delete-orphan')
+    texts = db.relationship('Text',cascade='all,delete-orphan')
 
 
 
@@ -118,7 +120,7 @@ class Text(db.Model):
 
     user_id = db.Column(
         db.Integer,
-        ForeignKey('users.id'),
+        ForeignKey('users.id',ondelete="CASCADE"),
         nullable=False
     )
 
@@ -143,7 +145,7 @@ class Text(db.Model):
         nullable=False
     )
 
-    goods = db.relationship('Good_text')
+    goods = db.relationship('Good_text',cascade='all,delete-orphan')
 
 
 
@@ -164,7 +166,7 @@ class Good_word(db.Model):
 
     user_id = db.Column(
         db.Integer,
-        ForeignKey('users.id'),
+        ForeignKey('users.id',ondelete='CASCADE'),
         nullable=False
     )
 
@@ -183,13 +185,13 @@ class Good_text(db.Model):
 
     text_id = db.Column(
         db.Integer,
-        ForeignKey('texts.id'),
+        ForeignKey('texts.id',ondelete='CASCADE'),
         nullable=False
     )
 
     user_id = db.Column(
         db.Integer,
-        ForeignKey('users.id'),
+        ForeignKey('users.id',ondelete='CASCADE'),
         nullable=False
     )
 
