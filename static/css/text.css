@@ -1,7 +1,7 @@
 @charset "UTF-8";
 
 html {
-  font-size:62.5%;
+  font-size:75%;
   font-family:"ヒラギノ明朝 ProN", "Hiragino Mincho ProN", serif;
   color: white;
   background-color: #062c54;
@@ -19,27 +19,40 @@ body {
   clear:both;
 }
 
-.titlearea {
-    width: 100%;
-    max-width: 500px;
-    resize: none;
+.form-group {
+    display:flex;
+    justify-content: center;
+    gap: 2rem;
+    margin-bottom: 2rem;
+    align-items: center;
+    margin-right: 80px;
+}
+
+.form-group label {
+  width: 80px;
+  text-align: right;
+  flex-shrink: 0;
+}
+
+.titlearea ,.textarea{
+  width: 100%;
+  max-width: 500px;
+  resize: none;
+  font-family: inherit;
+  font-size: 1.2rem;
+  padding: 0.8rem;
+
 }
 
 .textarea {
-    width: 100%;
-    max-width: 500px;
-    height: 150px;
-    resize: none;
-}
-
-.form-group {
-    display:flexbox;
-    justify-content: center;
-    gap: 2rem 0;
-    align-items: center;
+    height: 350px;
 }
 
 .form-actions {
   margin: 2rem 0;
+}
+
+a {
+  margin-top: 2rem;
 }
 

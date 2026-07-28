@@ -14,15 +14,16 @@
             <ul id="liked_list">
                 {% for word in liked_words %}
                     <li class="good_word_item">
-                        単語:{{ word.word }} <br>
-                        読み:{{ word.reading }} <br>
-                        意味:{{ word.mean }} <br>
-
                         <form class="good-form" action="{{ url_for('good_word', word_id=word.id) }}" method="POST">
                             <button type="submit" class="good-button">❤️</button>
                         </form>
+                        <div class="word-body">
+                            <p><span class="label">単語</span><span class="value">{{ word.word }}</span></p>
+                            <p><span class="label">読み</span><span class="value">{{ word.reading }}</span></p>
+                            <p><span class="label">意味</span><span class="value">{{ word.mean }}</span></p>
 
-                        <a href="{{ url_for('text_new', id=word.id) }}">文章作成</a>
+                            <a href="{{ url_for('text_new', id=word.id) }}">文章作成</a>
+                        </div>
                     </li>
                 {% endfor %}
             </ul>
@@ -32,12 +33,13 @@
             <ul id="liked_list">
                 {% for text in liked_texts %}
                     <li class="good_text_item">
-                        文章タイトル:{{ text.title }} <br>
-                        文章本文:{{ text.main_text }} <br>
-
                         <form class="good-form" action="{{ url_for('good_text', text_id=text.id) }}" method="POST">
                             <button type="submit" class="good-button">❤️</button>
                         </form>
+                        <div class="text-body">
+                            <p><span class="label">タイトル</span><span class="value">{{ text.title }}</span></p>
+                            <p><span class="label">文章本文</span><span class="value">{{ text.main_text }}</span></p>
+                        </div>
                     </li>
                 {% endfor %}
             </ul>
@@ -47,12 +49,14 @@
             <ul id="my_texts_list">
                 {% for text, good_count in my_texts_data %}
                     <li class="my_text_item">
-                        文章タイトル:{{ text.title }} <br>
-                        文章本文:{{ text.main_text }} <br>
-                        いいね数:{{ good_count }} <br>
-                        公開ステータス:{{ '公開' if text.text_status == 0 else '非公開' }} <br>
+                        <div class="my_text_body">
+                            <p><span class="label">タイトル</span><span class="value">{{ text.title }}</span></p>
+                            <p><span class="label">文章本文</span><span class="value">{{ text.main_text }}</span></p>
+                            <p><span class="label">いいね数</span><span class="value">{{ good_count }}</span></p>
+                            <p><span class=" label">ステータス</span><span class="value">{{ '公開' if text.text_status == 0 else '非公開' }}</span></p>
 
-                        <a href="{{ url_for('text_edit', id=text.id) }}">編集</a>
+                            <a href="{{ url_for('text_edit', id=text.id) }}">編集</a>
+                        </div>
                     </li>
                 {% endfor %}
             </ul>

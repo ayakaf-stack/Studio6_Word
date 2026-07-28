@@ -39,7 +39,6 @@ h2 {
 
 .item + .item {
   border-left: 1px solid white; /* 間に引く線の色と太さ */
-  padding-left: 20px; /* 線と中身のすき間 */
 }
 
 ul {
@@ -48,9 +47,38 @@ ul {
 }
 
 li{
-  margin: 2rem;
+  margin: 1rem auto;
+  padding: 1rem;
   /* background-color: rgba(255, 255, 255, 0.1); */
+  max-width: 350px;
+  text-align: left;
  }
+
+ .good_word_item,.good_text_item{
+  display: flex;
+  gap: 2rem;
+ }
+
+  .good_word_item p,.good_text_item p,.my_text_item p{
+    margin: 0.5rem;
+ }
+
+ .good-form{
+  padding: 0;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+ }
+
+.good_word_item .good-button{
+  margin-bottom: 40px;
+}
+
+.good_text_item .good-button{
+  margin-bottom: 20px;
+}
 
 .menu {
   width: 100%;
@@ -60,4 +88,31 @@ li{
   flex-direction: column;
   gap: 1rem;
   align-items: center;
+}
+
+.good_word_item p,.good_text_item p{
+  display: flex;
+  align-items: flex-start;
+}
+
+.word-body,.my_text_body{
+  display: flex;
+  flex-direction: column;
+}
+
+.word-body a,.my_text_item a{
+  align-self: flex-end;
+}
+
+.label{
+  display: inline-block;
+  width: 100px;
+  margin-right: 0.8rem;
+}
+
+.value {
+  flex: 1;
+  min-width: 0;
+  font-size: 1.4rem;
+  word-break: break-word;
 }
