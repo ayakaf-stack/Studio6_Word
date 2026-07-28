@@ -1,0 +1,53 @@
+.genre_btn {
+    background: none;
+    border: 1px solid #ccc;
+    padding: 4px 10px;
+    border-radius: 16px;
+    cursor: pointer;
+}
+
+.genre_btn.selected {
+    background: #4a90d9;
+    color: #fff;
+    border-color: #4a90d9;
+}
+
+.toggle_btn {
+    background: none;
+    border: 1px solid #ccc;
+    padding: 6px 16px;
+    cursor: pointer;
+}
+
+.toggle_btn.selected {
+    background: #4a90d9;
+    color: #fff;
+    border-color: #4a90d9;
+}
+
+#genre_list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    list-style: none;
+    padding: 0;
+    margin: 8px 0;
+}
+
+#genre_list li {
+    margin: 0;
+}
+
+.genre_btn {
+    background: none;
+    border: 1px solid #ccc;
+    padding: 4px 10px;
+    border-radius: 16px;
+    cursor: pointer;
+}
+
+.genre_btn.selected {
+    background: #4a90d9;
+    color: #fff;
+    border-color: #4a90d9;
+}
