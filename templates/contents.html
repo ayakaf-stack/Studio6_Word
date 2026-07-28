@@ -22,14 +22,13 @@
 <form onsubmit="return false;">
     <input type="search" id="search_input" placeholder="キーワードを入力">
 
-    <button type="button" id="genre_list_btn" style="display: {{ 'inline-block' if content_type == 'word' else 'none' }};">ジャンルを選択</button>
-    <ul id="genre_list" style="display:none;">
-        {% for genre in genres %}
-            <li>
-                <button type="button" class="genre_btn" data-genre-id="{{ genre.id }}">{{ genre.genre }}</button>
-            </li>
-        {% endfor %}
-    </ul>
+        <ul id="genre_list" style="display: {{ 'flex' if content_type == 'word' else 'none' }};">
+            {% for genre in genres %}
+                <li>
+                    <button type="button" class="genre_btn" data-genre-id="{{ genre.id }}">{{ genre.genre }}</button>
+                </li>
+            {% endfor %}
+        </ul>
 
     <select id="sort_select">
         <option value="">並び替え</option>
