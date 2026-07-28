@@ -9,13 +9,19 @@ from sqlalchemy import func
 
 app = Flask(__name__)
 
+DB_PASSWORD = os.getenv('DB_PASSWORD')
+DB_USER = os.getenv('DB_USER')
+DB_HOST = os.getenv('DB_HOST')
+DB_NAME = os.getenv('DB_NAME')
+SECRET_KEY = os.getenv('SECRET_KEY')
+
+
 app.config["SQLALCHEMY_DATABASE_URI"] = (
-    "mysql+pymysql://GUEST:GUEST@192.168.10.115/word_app"
-)
+    f"mysql+pymysql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}/{DB_NAME}")
 
 db.init_app(app)
 
-app.secret_key = 'your_secret_key'
+app.secret_key = SECRET_KEY
 
 
 # TOP画面
