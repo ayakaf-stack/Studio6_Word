@@ -1,9 +1,12 @@
 {% extends "base.html" %}
 {% block title %}一覧{% endblock %}
+{% block css %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/contents.css') }}">
+{% endblock %}
 {% block main %}
 <script src="{{ url_for('static', filename='js/good.js') }}" defer></script>
 <script src="{{ url_for('static', filename='js/contents.js') }}" defer></script>
-<link rel="stylesheet" href="{{ url_for('static', filename='css/contents.css') }}">
 <div id="flash-messages">
     {% with messages = get_flashed_messages() %}
         {% if messages %}
@@ -21,7 +24,7 @@
 
 <form onsubmit="return false;">
     <input type="search" id="search_input" placeholder="キーワードを入力">
-
+    
         <ul id="genre_list" style="display: {{ 'flex' if content_type == 'word' else 'none' }};">
             {% for genre in genres %}
                 <li>

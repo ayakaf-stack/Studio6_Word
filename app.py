@@ -9,13 +9,19 @@ from sqlalchemy import func
 
 app = Flask(__name__)
 
+DB_PASSWORD = os.getenv('DB_PASSWORD')
+DB_USER = os.getenv('DB_USER')
+DB_HOST = os.getenv('DB_HOST')
+DB_NAME = os.getenv('DB_NAME')
+SECRET_KEY = os.getenv('SECRET_KEY')
+
+
 app.config["SQLALCHEMY_DATABASE_URI"] = (
-    "mysql+pymysql://GUEST:GUEST@192.168.10.115/word_app"
-)
+    f"mysql+pymysql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}/{DB_NAME}")
 
 db.init_app(app)
 
-app.secret_key = 'your_secret_key'
+app.secret_key = SECRET_KEY
 
 
 # TOP画面
@@ -202,16 +208,30 @@ def logout():
 # 退会
 @app.route('/unregister', methods=['GET', 'POST'])
 def unregister():
+
+    # ログインチェック(GET/POST共通)
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+    
     if request.method == 'POST':
-        # ログインチェック
-        if 'user_id' not in session:
-            return redirect(url_for('login'))
     
         # ユーザーIDを取得
         my_id = session['user_id']
-
         user = db.session.get(User,my_id)
-        print(user)
+
+        password = request.form.get('password','')
+        checkbox = request.form.get('checkbox')
+
+        # パスワード未入力・チェックボックス未チェックのチェック
+        if not password or not checkbox:
+            flash('パスワードを入力し、注意事項に同意してください')
+            return redirect(url_for('unregister'))
+
+        # パスワード照合
+        if not check_password_hash(user.password_hash, password):
+            flash('パスワードが正しくありません')
+            return redirect(url_for('unregister'))
+
         db.session.delete(user)
         db.session.commit()
         session.clear()
@@ -512,8 +532,9 @@ def text_delete(id):
 def good_word(word_id):
     # 未ログインフラッシュメッセージ
     if 'user_id' not in session:
-        return jsonify({"error": "いいね機能を使うにはログインしてください"}), 401
-
+        return jsonify({
+            "error": 'いいね機能を使うには<a href="' + url_for('login') + '">ログイン</a>してください'
+        }), 401
     # ユーザーID取得
     user_id = session['user_id']
 
@@ -541,8 +562,9 @@ def good_word(word_id):
 def good_text(text_id):
     # 未ログインフラッシュメッセージ
     if 'user_id' not in session:
-        return jsonify({"error":"いいね機能を使うにはログインしてください"}),401
-
+        return jsonify({
+            "error": 'いいね機能を使うには<a href="' + url_for('login') + '">ログイン</a>してください'
+        }), 401
     # ユーザーID取得
     user_id = session['user_id']
 

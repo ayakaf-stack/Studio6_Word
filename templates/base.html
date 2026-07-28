@@ -10,14 +10,15 @@
     <header class="header">
         <a href="/">美しい日本語</a></header>
     <main>
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                {% for message in messages %}
+                    <p>{{message}}</p>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
         {% block main %}
-            {% with messages = get_flashed_messages() %}
-                {% if messages %}
-                    {% for message in messages %}
-                        <p>{{message}}</p>
-                    {% endfor %}
-                {% endif %}
-            {% endwith %}
         {% endblock %}
     </main>
     <footer class="footer"><p class="text-center">&copy;Studio6</p></footer>
