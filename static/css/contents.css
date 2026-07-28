@@ -1,8 +1,3 @@
-/* =========================================================
-   美しい日本語 — デザイントークン
-   和色(藍鉄・生成り・山吹・紅)を基調にした歌集風スタイル
-   ========================================================= */
-
 :root {
     --color-bg: #14202b;
     --color-surface: #1a2834;
@@ -182,12 +177,12 @@ a:focus-visible {
 }
 
 .genre_btn.selected {
-    background: var(--color-red);
-    border-color: var(--color-red);
-    color: var(--color-text);
+    background: var(--color-gold);
+    border-color: var(--color-gold);
+    color: var(--color-bg);
 }
 
-/* -------------------- 一覧(歌集の一葉として) -------------------- */
+/* -------------------- 一覧 -------------------- */
 
 #list_container {
     list-style: none;
@@ -300,28 +295,6 @@ a:focus-visible {
     color: var(--color-text-muted);
     padding: 40px 0;
     font-size: 0.95rem;
-}
-
-/* -------------------- TOP画面「次へ」ボタン -------------------- */
-
-#next_word_btn {
-    display: block;
-    margin: 8px auto 40px;
-    background: transparent;
-    border: 1px solid var(--color-gold);
-    color: var(--color-gold);
-    font-family: var(--font-body);
-    font-size: 0.9rem;
-    letter-spacing: 0.08em;
-    padding: 8px 28px;
-    border-radius: 999px;
-    cursor: pointer;
-    transition: background 0.2s ease, color 0.2s ease;
-}
-
-#next_word_btn:hover {
-    background: var(--color-gold);
-    color: var(--color-bg);
 }
 
 /* -------------------- フッター -------------------- */
