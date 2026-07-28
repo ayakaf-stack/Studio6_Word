@@ -4,7 +4,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const searchInput = document.getElementById("search_input");
     const sortSelect = document.getElementById("sort_select");
-    const genreListBtn = document.getElementById("genre_list_btn");
     const genreList = document.getElementById("genre_list");
     const listContainer = document.getElementById("list_container");
     const noResult = document.getElementById("no_result");
@@ -15,14 +14,11 @@ document.addEventListener("DOMContentLoaded", () => {
         btn.addEventListener("click", () => {
             currentType = btn.dataset.type;
 
-            // 選択状態の見た目を切り替え
             toggleBtns.forEach(b => b.classList.remove("selected"));
             btn.classList.add("selected");
 
-            genreListBtn.style.display = currentType === "word" ? "inline-block" : "none";
-            if (currentType !== "word") {
-                genreList.style.display = "none";
-            }
+            genreList.style.display = currentType === "word" ? "flex" : "none";
+
             fetchAndRender();
         });
     });
@@ -35,11 +31,6 @@ document.addEventListener("DOMContentLoaded", () => {
     // ソート変更
     sortSelect.addEventListener("change", () => {
         fetchAndRender();
-    });
-
-    // ジャンル一覧の表示/非表示
-    genreListBtn.addEventListener("click", () => {
-        genreList.style.display = genreList.style.display === "none" ? "block" : "none";
     });
 
     // ジャンル選択(複数可)

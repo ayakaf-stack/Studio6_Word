@@ -1,3 +1,7 @@
+{% extends "base.html" %}
+{% block title %}一覧{% endblock %}
+{% block main %}
+
 <script src="{{ url_for('static', filename='js/good.js') }}" defer></script>
 <script src="{{ url_for('static', filename='js/top.js') }}" defer></script>
 
@@ -48,3 +52,5 @@
     <a href="/register">新規登録</a>
     <a href="/login">ログイン</a>
 {% endif %}
+
+{% endblock %}
