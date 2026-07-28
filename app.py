@@ -4,6 +4,7 @@ from flask import Flask, render_template,redirect,session,flash,url_for,request,
 from models.models import Word,Genre,Word_genre,User,Text,Good_word,Good_text
 from models.extensions import db
 from werkzeug.security import generate_password_hash,check_password_hash
+from sqlalchemy import func
 
 
 app = Flask(__name__)
@@ -20,48 +21,60 @@ app.secret_key = 'your_secret_key'
 # TOP画面
 @app.route('/')
 def index():
-    # wordsの全件取得
     words = Word.query.all()
-
-    # wordsから単語をランダムに抽出
     random_word = choice(words)
 
-    # ワードに紐づいたtextsを抽出
     texts = Text.query.filter(
         Text.main_text.contains(random_word.word),
         Text.text_status == 0
     ).all()
 
-    # ログイン判定
     is_login = 'user_id' in session
 
-    # 各textのいいね数といいね済みかどうかをまとめて取得
-    texts_data = []
+    texts_items = []
     for text in texts:
         good_count_text = len(text.goods)
         is_good_text = False
-
         if is_login:
-            like = Good_text.query.filter_by(text_id=text.id, user_id=session['user_id']).first()
-            is_good_text = bool(like)
-        texts_data.append((good_count_text, is_good_text))
+            is_good_text = Good_text.query.filter_by(text_id=text.id, user_id=session['user_id']).first() is not None
+        texts_items.append({
+            'id': text.id,
+            'title': text.title,
+            'main_text': text.main_text,
+            'good_count': good_count_text,
+            'is_good': is_good_text
+        })
 
-    # 各textsとデータ(件数, いいね済みか)をzipで紐付け
-    texts_contents = dict(zip(texts, texts_data))
     is_good = False
     if is_login:
-        like = Good_word.query.filter_by(word_id=random_word.id, user_id=session['user_id']).first()
-        is_good = bool(like)
+        is_good = Good_word.query.filter_by(word_id=random_word.id, user_id=session['user_id']).first() is not None
 
     good_count = Good_word.query.filter_by(word_id=random_word.id).count()
 
+    # Ajax(JS)からのリクエストならJSONだけ返す
+    if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+        return jsonify({
+            'word': {
+                'id': random_word.id,
+                'word': random_word.word,
+                'reading': random_word.reading,
+                'mean': random_word.mean
+            },
+            'is_good': is_good,
+            'good_count': good_count,
+            'texts': texts_items
+        })
+
+    # 通常アクセスはページ全体を返す(texts辞書は既存のテンプレート側の書き方に合わせて渡す)
+    texts_contents = {text: (item['good_count'], item['is_good']) for text, item in zip(texts, texts_items)}
+
     return render_template(
         'top.html',
-        word = random_word,
-        text = texts_contents,
-        is_login = is_login,
-        is_good = is_good,
-        good_count = good_count
+        word=random_word,
+        text=texts_contents,
+        is_login=is_login,
+        is_good=is_good,
+        good_count=good_count
     )
 
 
@@ -213,6 +226,105 @@ def unregister():
 # 一覧・検索
 @app.route('/contents', methods=['GET'])
 def contents():
+    # 文章、単語のリクエスト取得
+    content_type = request.args.get('type','word')
+    # キーワード検索
+    keyword = request.args.get('q','').strip()
+    # ジャンル検索
+    genre_ids = request.args.getlist('genre',type=int)
+    # 並び替え
+    sort = request.args.get('sort','')
+
+    # いいね情報取得のためのユーザー情報
+    is_login = 'user_id' in session
+    user_id = session.get('user_id')
+
+
+    # text検索
+    if content_type == 'text':
+        query = Text.query.filter(Text.text_status == 0)
+
+        if keyword:
+            query = query.filter(
+                db.or_(
+                    Text.title.contains(keyword),
+                    Text.main_text.contains(keyword)
+                )
+            )
+        if sort == 'good_desc':
+            texts = query.all()
+            texts.sort(key=lambda t:len(t.goods),reverse=True)
+        elif sort == 'date_asc':
+            texts = query.order_by(Text.id.acs()).all()
+        elif sort == 'date_desc':
+            texts = query.order_by(Text.id.desc()).all()
+        else:
+            texts = query.order_by(Text.id.desc()).all()
+
+        items = []
+        for text in texts:
+            good_count = len(text.goods)
+            is_good = False
+            if is_login:
+                is_good = Good_text.query.filter_by(text_id=text.id, user_id=user_id).first() is not None
+            items.append({
+                'id': text.id,
+                'title': text.title,
+                'main_text': text.main_text,
+                'good_count': good_count,
+                'is_good': is_good
+            })
+    # word検索
+    else:
+        query = Word.query
+
+        if keyword:
+            query = query.filter(
+                db.or_(
+                    Word.word.contains(keyword),
+                    Word.mean.contains(keyword),
+                    Word.reading.contains(keyword)
+                )
+            )
+
+        if genre_ids:
+            query = (
+                query.join(Word_genre)
+                .filter(Word_genre.genre_id.in_(genre_ids))
+                .group_by(Word.id)
+                .having(func.count(func.distinct(Word_genre.genre_id)) == len(genre_ids))  # ← AND条件化
+            )
+        words = query.all()
+
+        if sort == 'aiueo_asc':
+            words.sort(key=lambda w: w.reading)
+        elif sort == 'aiueo_desc':
+            words.sort(key=lambda w: w.reading, reverse=True)
+        elif sort == 'good_desc':
+            words.sort(key=lambda w: len(w.goods), reverse=True)
+
+        items = []
+        for word in words:
+            good_count = len(word.goods)
+            is_good = False
+            if is_login:
+                is_good = Good_word.query.filter_by(word_id=word.id, user_id=user_id).first() is not None
+            items.append({
+                'id': word.id,
+                'word': word.word,
+                'reading': word.reading,
+                'mean': word.mean,
+                'good_count': good_count,
+                'is_good': is_good
+            })
+
+    # Ajax(JS)からのリクエストならJSONだけ返す
+    if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+        return jsonify({'type': content_type, 'items': items})
+
+    # 通常アクセスならページ全体を返す(初期表示は単語一覧、デフォルト)
+    genres = Genre.query.all()
+    return render_template('contents.html', items=items, content_type=content_type, genres=genres, is_login=is_login)
 
     return render_template('contents.html')
 
