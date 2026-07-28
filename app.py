@@ -208,16 +208,30 @@ def logout():
 # 退会
 @app.route('/unregister', methods=['GET', 'POST'])
 def unregister():
+
+    # ログインチェック(GET/POST共通)
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+    
     if request.method == 'POST':
-        # ログインチェック
-        if 'user_id' not in session:
-            return redirect(url_for('login'))
     
         # ユーザーIDを取得
         my_id = session['user_id']
-
         user = db.session.get(User,my_id)
-        print(user)
+
+        password = request.form.get('password','')
+        checkbox = request.form.get('checkbox')
+
+        # パスワード未入力・チェックボックス未チェックのチェック
+        if not password or not checkbox:
+            flash('パスワードを入力し、注意事項に同意してください')
+            return redirect(url_for('unregister'))
+
+        # パスワード照合
+        if not check_password_hash(user.password_hash, password):
+            flash('パスワードが正しくありません')
+            return redirect(url_for('unregister'))
+
         db.session.delete(user)
         db.session.commit()
         session.clear()
