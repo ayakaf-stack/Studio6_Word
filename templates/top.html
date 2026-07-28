@@ -1,56 +1,67 @@
 {% extends "base.html" %}
 {% block title %}一覧{% endblock %}
+{% block css %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/top.css') }}">
+{% endblock %}
 {% block main %}
 
 <script src="{{ url_for('static', filename='js/good.js') }}" defer></script>
 <script src="{{ url_for('static', filename='js/top.js') }}" defer></script>
 
-<div id="flash-messages">
-    {% with messages = get_flashed_messages() %}
-        {% if messages %}
-            {% for message in messages %}
-                <div class="flash-message">{{ message }}</div>
-            {% endfor %}
-        {% endif %}
-    {% endwith %}
-</div>
-
-<div id="word_area">
-    単語:<span id="word_text">{{ word.word }}</span> <br>
-    読み:<span id="word_reading">{{ word.reading }}</span> <br>
-    意味:<span id="word_mean">{{ word.mean }}</span> <br>
-
-    <form class="good-form" id="word_good_form" action="{{ url_for('good_word', word_id=word.id) }}" method="POST">
-        <button type="submit" class="good-button">{{ '❤️' if is_good else '🤍' }}</button>
-        <span class="good-count">{{ good_count }}</span>
-    </form>
-
-    <a id="text_new_link" href="{{ url_for('text_new', id=word.id) }}">文章作成</a>
-</div>
-
-<div id="text_list_area">
-    {% for text, good_data in text.items() %}
-        <div class="text_item">
-            文章タイトル:{{ text.title }} <br>
-            文章本文:{{ text.main_text }} <br>
-            <form class="good-form" action="{{ url_for('good_text', text_id=text.id) }}" method="POST">
-                <button type="submit" class="good-button">{{ '❤️' if good_data[1] else '🤍' }}</button>
-                <span class="good-count">{{ good_data[0] }}</span>
-            </form>
-        </div>
-    {% endfor %}
-</div>
-
-<button type="button" id="next_word_btn">次へ</button>
-
 <a href="/contents">単語・文章一覧</a>
+<div class="menu">
+    {% if is_login %}
+        <a href="/mypage">マイページ</a>
+        <a href="/logout">ログアウト</a>
+    {% else %}
+        <a href="/register">新規登録</a>
+        <a href="/login">ログイン</a>
+    {% endif %}
+</div>
 
-{% if is_login %}
-    <a href="/mypage">マイページ</a>
-    <a href="/logout">ログアウト</a>
-{% else %}
-    <a href="/register">新規登録</a>
-    <a href="/login">ログイン</a>
-{% endif %}
+<div id="box">
+    <div id="word_area">
+        <p><span id="word_text" class="value">{{ word.word }}</span></p>
+        <p><span id="word_reading" class="value">【 {{ word.reading }} 】</span></p>
+        <p><span id="word_mean" class="value">{{ word.mean }}</span></p>
+
+        <div class="word_action">
+            <form class="good-form" id="word_good_form" action="{{ url_for('good_word', word_id=word.id) }}" method="POST">
+                <button type="submit" class="good-button">{{ '❤️' if is_good else '🤍' }}</button>
+                <span class="good-count">{{ good_count }}</span>
+            </form>
+
+            <a id="text_new_link" href="{{ url_for('text_new', id=word.id) }}">文章作成</a>
+
+            <button type="button" id="next_word_btn">次へ</button>
+        </div>
+    </div>
+
+    <div id="text_list_area">
+        <p class="section-title">この単語から作成された文章</p>
+        {% for text, good_data in text.items() %}
+            <div class="text_item">
+                <div class="text_main">
+                    <p><span class="label">タイトル</span><span class="value">{{ text.title }}</span></p>
+
+                    <div class="text_row">
+                        <details class="text_drawer">
+                            <summary class="drawer_btn">本文を表示</summary>
+                            <p class="drawer_content">{{ text.main_text }}</p>
+                        </details>
+                    </div>
+                </div>
+
+                <form class="good-form" action="{{ url_for('good_text', text_id=text.id) }}" method="POST">
+                    <button type="submit" class="good-button">{{ '❤️' if good_data[1] else '🤍' }}</button>
+                    <span class="good-count">{{ good_data[0] }}</span>
+                </form>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+
+
 
 {% endblock %}
