@@ -512,8 +512,9 @@ def text_delete(id):
 def good_word(word_id):
     # 未ログインフラッシュメッセージ
     if 'user_id' not in session:
-        return jsonify({"error": "いいね機能を使うにはログインしてください"}), 401
-
+        return jsonify({
+            "error": 'いいね機能を使うには<a href="' + url_for('login') + '">ログイン</a>してください'
+        }), 401
     # ユーザーID取得
     user_id = session['user_id']
 
@@ -541,8 +542,9 @@ def good_word(word_id):
 def good_text(text_id):
     # 未ログインフラッシュメッセージ
     if 'user_id' not in session:
-        return jsonify({"error":"いいね機能を使うにはログインしてください"}),401
-
+        return jsonify({
+            "error": 'いいね機能を使うには<a href="' + url_for('login') + '">ログイン</a>してください'
+        }), 401
     # ユーザーID取得
     user_id = session['user_id']
 

@@ -24,7 +24,7 @@
 
 <form onsubmit="return false;">
     <input type="search" id="search_input" placeholder="キーワードを入力">
-
+    
         <ul id="genre_list" style="display: {{ 'flex' if content_type == 'word' else 'none' }};">
             {% for genre in genres %}
                 <li>

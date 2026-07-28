@@ -34,6 +34,10 @@ a:focus-visible {
     border-color: var(--color-gold);
 }
 
+.flash-message a {
+    display: inline;
+}
+
 /* -------------------- サイトタイトル -------------------- */
 
 .header {
