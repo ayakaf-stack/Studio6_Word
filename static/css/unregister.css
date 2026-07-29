@@ -6,9 +6,9 @@ html {
   background-color: #062c54;
   text-align: center;
 }
-
 h1 {
   font-size: larger;
+  color: #c99a4a;
 }
 
 body {
@@ -23,8 +23,14 @@ body {
   clear:both;
 }
 
-.form {
+form {
   width: 500px;
+  margin: 0 auto;
+  max-width: 500px;
+}
+
+.form {
+  width: 400px;
   margin: 50px auto;
 }
 
@@ -51,11 +57,14 @@ input::placeholder {
 }
 
 .check-area {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  margin-top: 20px;
+  margin: 20px auto auto;
+  background-color: rgba(255,255,255,0.2);
+  padding: 1rem;
+}
+
+.text {
+  text-align: left;
+  margin-bottom: 10px;
 }
 
 .checkbox {
@@ -75,7 +84,7 @@ input::placeholder {
 }
 
 button {
-  margin-top: 30px;
+  margin-top: 20px;
   margin-bottom: 10px;
 }
 
