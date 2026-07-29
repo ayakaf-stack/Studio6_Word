@@ -50,6 +50,36 @@ input::placeholder {
   opacity: 1;
 }
 
+.check-area {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.checkbox {
+  transform: scale(1.5);
+  cursor: pointer;
+}
+
+.check-area label {
+  width: auto;
+  margin: 0;
+  text-align: left;
+  cursor: pointer;
+}
+
+.password-area {
+  margin-top: 20px;
+}
+
 button {
+  margin-top: 30px;
+  margin-bottom: 10px;
+}
+
+.button-area {
+  display: inline-block;
   margin-top: 20px;
 }
