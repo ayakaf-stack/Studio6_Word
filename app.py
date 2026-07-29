@@ -94,7 +94,7 @@ def login():
 
         if not user or not check_password_hash(user.password_hash, password):
             flash('ログインに失敗しました')
-            return render_template('login.html')
+            return redirect(url_for('login'))
         
         session['user_id'] = user.id
         session['user_name'] = user.user_name
