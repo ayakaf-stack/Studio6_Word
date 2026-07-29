@@ -9,8 +9,8 @@ html {
 
 h1 {
   font-size: larger;
+  color: #c99a4a;
 }
-
 
 body {
   font-size:1.4rem;
@@ -25,7 +25,7 @@ body {
 }
 
 .form {
-  width: 500px;
+  width: 400px;
   margin: 50px auto;
 }
 
