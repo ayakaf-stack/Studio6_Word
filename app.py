@@ -202,6 +202,7 @@ def mypage():
 def logout():
     if 'user_id' in session:
         session.clear()
+        flash('ログアウトしました')
     return redirect(url_for('index'))
 
 

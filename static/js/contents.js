@@ -89,14 +89,20 @@ document.addEventListener("DOMContentLoaded", () => {
                 `;
             } else {
                 li.className = "text_item";
-                li.innerHTML = `
-                    文章タイトル:${item.title} <br>
-                    文章本文:${item.main_text} <br>
-                    <form class="good-form" action="/good/text/${item.id}" method="POST">
-                        <button type="submit" class="good-button">${item.is_good ? "❤️" : "🤍"}</button>
-                        <span class="good-count">${item.good_count}</span>
-                    </form>
-                `;
+                    li.innerHTML = `
+                        <span class="text_label">タイトル</span>
+                        <p class="text_title_display">${item.title}</p>
+
+                        <details class="text_drawer">
+                            <summary class="drawer_btn">本文を表示</summary>
+                            <p class="drawer_content">${item.main_text}</p>
+                        </details>
+
+                        <form class="good-form" action="/good/text/${item.id}" method="POST">
+                            <button type="submit" class="good-button">${item.is_good ? "❤️" : "🤍"}</button>
+                            <span class="good-count">${item.good_count}</span>
+                        </form>
+                    `;
             }
 
             listContainer.appendChild(li);

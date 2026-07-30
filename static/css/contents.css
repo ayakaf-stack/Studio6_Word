@@ -327,3 +327,47 @@ footer,
         max-width: 100%;
     }
 }
+
+.label {
+    font-size: 0.85rem;
+    display: inline-block;
+    width: 80px;
+    color: var(--color-text-muted);
+}
+
+.value {
+    color: var(--color-text);
+}
+
+.drawer_btn {
+    font-size: 0.85rem;
+    color: var(--color-gold);
+    cursor: pointer;
+    display: inline-block;
+    margin-top: 6px;
+}
+
+.drawer_content {
+    font-size: 0.95rem;
+    color: var(--color-text);
+    max-width: 480px;
+    margin: 10px auto 0;
+    line-height: 1.9;
+    text-align: left;
+}
+
+.text_label {
+    display: block;
+    font-size: 0.8rem;
+    color: var(--color-text-muted);
+    letter-spacing: 0.1em;
+    margin-bottom: 6px;
+}
+
+.text_title_display {
+    font-family: var(--font-display);
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: var(--color-text);
+    margin: 0 0 14px;
+}

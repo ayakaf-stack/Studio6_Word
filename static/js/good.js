@@ -27,6 +27,15 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 function showFlashMessage(message) {
-    const container = document.getElementById("flash-messages");
+    document.querySelectorAll("main > p").forEach(p => p.remove());
+
+    let container = document.getElementById("flash-messages");
+
+    if (!container) {
+        container = document.createElement("div");
+        container.id = "flash-messages";
+        document.querySelector("main").prepend(container);
+    }
+
     container.innerHTML = `<div class="flash-message">${message}</div>`;
 }

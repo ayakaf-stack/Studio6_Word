@@ -40,25 +40,22 @@
 
     <div id="text_list_area">
         <p class="section-title">この単語から作成された文章</p>
-        {% for text, good_data in text.items() %}
-            <div class="text_item">
-                <div class="text_main">
-                    <p><span class="label">タイトル</span><span class="value">{{ text.title }}</span></p>
+            {% for text, good_data in text.items() %}
+                <div class="text_item">
+                    <span class="text_label">タイトル</span>
+                    <p class="text_title_display">{{ text.title }}</p>
 
-                    <div class="text_row">
-                        <details class="text_drawer">
-                            <summary class="drawer_btn">本文を表示</summary>
-                            <p class="drawer_content">{{ text.main_text }}</p>
-                        </details>
-                    </div>
+                    <details class="text_drawer">
+                        <summary class="drawer_btn">本文を表示</summary>
+                        <p class="drawer_content">{{ text.main_text }}</p>
+                    </details>
+
+                    <form class="good-form" action="{{ url_for('good_text', text_id=text.id) }}" method="POST">
+                        <button type="submit" class="good-button">{{ '❤️' if good_data[1] else '🤍' }}</button>
+                        <span class="good-count">{{ good_data[0] }}</span>
+                    </form>
                 </div>
-
-                <form class="good-form" action="{{ url_for('good_text', text_id=text.id) }}" method="POST">
-                    <button type="submit" class="good-button">{{ '❤️' if good_data[1] else '🤍' }}</button>
-                    <span class="good-count">{{ good_data[0] }}</span>
-                </form>
-            </div>
-        {% endfor %}
+            {% endfor %}
     </div>
 </div>
 
