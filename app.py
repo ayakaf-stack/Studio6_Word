@@ -5,7 +5,13 @@ from models.models import Word,Genre,Word_genre,User,Text,Good_word,Good_text
 from models.extensions import db
 from werkzeug.security import generate_password_hash,check_password_hash
 from sqlalchemy import func
+from itsdangerous import URLSafeTimedSerializer, SignatureExpired, BadSignature
+from flask_mail import Mail, Message
+from dotenv import load_dotenv
 
+
+
+load_dotenv()
 
 app = Flask(__name__)
 
@@ -15,6 +21,9 @@ DB_HOST = os.getenv('DB_HOST')
 DB_NAME = os.getenv('DB_NAME')
 SECRET_KEY = os.getenv('SECRET_KEY')
 
+ADMIN_EMAIL = os.getenv('ADMIN_EMAIL')
+ADMIN_PASSWORD = os.getenv('ADMIN_PASSWORD')
+
 
 app.config["SQLALCHEMY_DATABASE_URI"] = (
     f"mysql+pymysql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}/{DB_NAME}")
@@ -22,6 +31,22 @@ app.config["SQLALCHEMY_DATABASE_URI"] = (
 db.init_app(app)
 
 app.secret_key = SECRET_KEY
+
+# --- メール送信設定 ---
+app.config['MAIL_SERVER'] = 'smtp.gmail.com'
+app.config['MAIL_PORT'] = 587
+app.config['MAIL_USE_TLS'] = True
+app.config['MAIL_USERNAME'] = os.getenv('MAIL_USERNAME')
+app.config['MAIL_PASSWORD'] = os.getenv('MAIL_PASSWORD')
+app.config['MAIL_DEFAULT_SENDER'] = os.getenv('MAIL_USERNAME')
+
+mail = Mail(app)
+
+# --- マジックリンク用トークン発行・検証 ---
+serializer = URLSafeTimedSerializer(SECRET_KEY)
+
+# 使用済みトークンの記録(メモリ上・サーバー再起動でリセットされる)
+used_tokens = set()
 
 
 # TOP画面
@@ -57,7 +82,6 @@ def index():
 
     good_count = Good_word.query.filter_by(word_id=random_word.id).count()
 
-    # Ajax(JS)からのリクエストならJSONだけ返す
     if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
         return jsonify({
             'word': {
@@ -71,7 +95,6 @@ def index():
             'texts': texts_items
         })
 
-    # 通常アクセスはページ全体を返す(texts辞書は既存のテンプレート側の書き方に合わせて渡す)
     texts_contents = {text: (item['good_count'], item['is_good']) for text, item in zip(texts, texts_items)}
 
     return render_template(
@@ -90,6 +113,22 @@ def login():
     if request.method == 'POST':
         email = request.form.get('email')
         password = request.form.get('password')
+
+        # --- 管理者判定(先に判定し、通常ユーザー処理には進まない) ---
+        if email == ADMIN_EMAIL and password == ADMIN_PASSWORD:
+            token = serializer.dumps(email, salt='admin-login')
+            verify_url = url_for('admin_verify', token=token, _external=True)
+
+            msg = Message(
+                subject='管理者ログイン用リンク',
+                recipients=[email],
+                body=f'以下のURLから管理者画面にログインしてください(有効期限15分)\n\n{verify_url}'
+            )
+            mail.send(msg)
+
+            flash('登録されたメールアドレスに送信されたURLから管理者画面にログインしてください')
+            return redirect(url_for('login'))
+
         user = User.query.filter_by(email=email).first()
 
         if not user or not check_password_hash(user.password_hash, password):
@@ -103,6 +142,33 @@ def login():
     return render_template('login.html')
 
 
+# 管理者マジックリンク検証
+@app.route('/admin/verify/<token>', methods=['GET'])
+def admin_verify(token):
+    if token in used_tokens:
+        flash('このリンクは既に使用されています')
+        return redirect(url_for('login'))
+
+    try:
+        email = serializer.loads(token, salt='admin-login', max_age=900)  # 15分
+    except SignatureExpired:
+        flash('リンクの有効期限が切れています')
+        return redirect(url_for('login'))
+    except BadSignature:
+        flash('不正なリンクです')
+        return redirect(url_for('login'))
+
+    if email != ADMIN_EMAIL:
+        flash('不正なリンクです')
+        return redirect(url_for('login'))
+
+    used_tokens.add(token)
+    session['is_admin'] = True
+
+    flash('管理者としてログインしました')
+    return redirect(url_for('admin'))
+
+
 # 新規登録
 # 田中さん担当
 @app.route('/register', methods=['GET', 'POST'])
@@ -112,36 +178,29 @@ def register():
         email = request.form.get('email', '').strip()
         password = request.form.get('password', '').strip()
 
-        # 未入力チェック
         if not user_name or not email or not password:
             flash("全ての項目を正しく入力してください")
             return redirect(url_for('register'))
         
-        # ユーザー名文字数チェック
         if len(user_name) > 255:
             flash("ユーザー名は255文字以内で入力してください")
             return redirect(url_for('register'))
         
-        # メールアドレス形式チェック
         if not re.fullmatch(r"^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$", email):
             flash("既に登録済みのメールアドレスか不正なメールアドレスです")
             return redirect(url_for("register"))
 
-        # メールアドレス重複チェック
         user = User.query.filter_by(email=email).first()
         if user:
             flash("既に登録済みのメールアドレスか不正なメールアドレスです")
             return redirect(url_for('register'))
         
-        # パスワード文字数チェック
         if len(password) < 8 or len(password) > 16:
             flash("パスワードは8文字以上16文字以内で入力してください")
             return redirect(url_for('register'))
         
-        # パスワードをハッシュ化
         password_hash = generate_password_hash(password)
 
-        # ユーザー登録
         user = User(
              user_name=user_name,
             email=email,
@@ -160,7 +219,6 @@ def register():
 # マイページ
 @app.route('/mypage', methods=['GET'])
 def mypage():
-    # ログインチェック
     if 'user_id' not in session:
         flash('ログインが必要です')
         return redirect(url_for('login'))
@@ -168,21 +226,18 @@ def mypage():
     user_id = session['user_id']
     user = User.query.get_or_404(user_id)
 
-    # --- いいねした単語一覧 ---
     good_words = Good_word.query.filter_by(user_id=user_id).all()
     liked_words = []
     for gw in good_words:
         word = Word.query.get(gw.word_id)
         liked_words.append(word)
 
-    # --- いいねした文章一覧 ---
     good_texts = Good_text.query.filter_by(user_id=user_id).all()
     liked_texts = []
     for gt in good_texts:
         text = Text.query.get(gt.text_id)
         liked_texts.append(text)
 
-    # --- 自分が作成した文章一覧(いいね数つき) ---
     my_texts = Text.query.filter_by(user_id=user_id).all()
     my_texts_data = []
     for text in my_texts:
@@ -210,25 +265,21 @@ def logout():
 @app.route('/unregister', methods=['GET', 'POST'])
 def unregister():
 
-    # ログインチェック(GET/POST共通)
     if 'user_id' not in session:
         return redirect(url_for('login'))
     
     if request.method == 'POST':
     
-        # ユーザーIDを取得
         my_id = session['user_id']
         user = db.session.get(User,my_id)
 
         password = request.form.get('password','')
         checkbox = request.form.get('checkbox')
 
-        # パスワード未入力・チェックボックス未チェックのチェック
         if not password or not checkbox:
             flash('パスワードを入力し、注意事項に同意してください')
             return redirect(url_for('unregister'))
 
-        # パスワード照合
         if not check_password_hash(user.password_hash, password):
             flash('パスワードが正しくありません')
             return redirect(url_for('unregister'))
@@ -247,21 +298,15 @@ def unregister():
 # 一覧・検索
 @app.route('/contents', methods=['GET'])
 def contents():
-    # 文章、単語のリクエスト取得
     content_type = request.args.get('type','word')
-    # キーワード検索
     keyword = request.args.get('q','').strip()
-    # ジャンル検索
     genre_ids = request.args.getlist('genre',type=int)
-    # 並び替え
     sort = request.args.get('sort','')
 
-    # いいね情報取得のためのユーザー情報
     is_login = 'user_id' in session
     user_id = session.get('user_id')
 
 
-    # text検索
     if content_type == 'text':
         query = Text.query.filter(Text.text_status == 0)
 
@@ -295,7 +340,6 @@ def contents():
                 'good_count': good_count,
                 'is_good': is_good
             })
-    # word検索
     else:
         query = Word.query
 
@@ -313,7 +357,7 @@ def contents():
                 query.join(Word_genre)
                 .filter(Word_genre.genre_id.in_(genre_ids))
                 .group_by(Word.id)
-                .having(func.count(func.distinct(Word_genre.genre_id)) == len(genre_ids))  # ← AND条件化
+                .having(func.count(func.distinct(Word_genre.genre_id)) == len(genre_ids))
             )
         words = query.all()
 
@@ -339,27 +383,21 @@ def contents():
                 'is_good': is_good
             })
 
-    # Ajax(JS)からのリクエストならJSONだけ返す
     if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
         return jsonify({'type': content_type, 'items': items})
 
-    # 通常アクセスならページ全体を返す(初期表示は単語一覧、デフォルト)
     genres = Genre.query.all()
     return render_template('contents.html', items=items, content_type=content_type, genres=genres, is_login=is_login)
-
-    return render_template('contents.html')
 
 
 # 新規文章作成
 @app.route('/text-new/<int:id>', methods=['GET', 'POST'])
 def text_new(id):
-    # ログインチェック
     user_id = session.get('user_id')
     if not user_id:
         flash("ログインが必要です", "warning")
         return redirect(url_for('login'))
     
-    # 選択した単語IDの受け取り
     word_id = id
     select_word = Word.query.get(word_id)
 
@@ -369,7 +407,6 @@ def text_new(id):
         text_status_val = request.form.get("text_status", "0")
         text_status = int(text_status_val) if text_status_val.isdigit() else 0
 
-        # バリデーション仕様の適用
         render_error = lambda: render_template(
             "text-new.html",
             user_id=user_id,
@@ -380,7 +417,6 @@ def text_new(id):
             select_word=select_word
         )
 
-        # バリデーション
         if not title:
             flash("タイトルを入力してください", "error")
             return render_error()
@@ -398,20 +434,17 @@ def text_new(id):
             flash(f"本文に選択した単語（{select_word.word}）が含まれていません", "error")
             return render_error()
         
-        # 重複チェック
         existing_text = Text.query.filter_by(title=title, main_text=main_text).first()
         if existing_text:
             text_status = 1
             flash("タイトルと本文が同一の文章が既に存在するため、この文章は下書き保存されます", "info")
 
-        # データベース登録処理
         new_text = Text(
             user_id = user_id,
             title=title,
             main_text=main_text,
             text_status=text_status,
             word = word_id
-            # word=int(word) if (word and word.isdigit()) else None
             )
         db.session.add(new_text)
         db.session.commit()
@@ -422,20 +455,16 @@ def text_new(id):
     return render_template('text-new.html',word=word_id, select_word=select_word)
 
 
-
-
 # 文章編集
 @app.route('/text-edit/<int:id>', methods=['GET', 'POST'])
 def text_edit(id):
     text = db.get_or_404(Text, id)
 
-    # ログインチェック
     user_id = session.get('user_id')
     if not user_id:
         flash("ログインが必要です", "warning")
         return redirect(url_for('login'))
 
-    # ユーザー判定
     if text.user_id != user_id:
         flash("他ユーザーの文章は編集できません", "error")
         return redirect(url_for('mypage'))
@@ -451,7 +480,6 @@ def text_edit(id):
 
         select_word = Word.query.get(text.word) if text.word else None
 
-        # バリデーション仕様の適用
         render_error = lambda: render_template(
             "text-edit.html",
             text=text,
@@ -462,7 +490,6 @@ def text_edit(id):
             select_word=select_word
         )
 
-        # バリデーション
         if not title:
             flash("タイトルを入力してください", "error")
             return render_error()
@@ -488,7 +515,6 @@ def text_edit(id):
             text_status = 1
             flash("タイトルと本文が同一の文章が既に存在するため、この文章は下書き保存されます", "info")
 
-        # データベース更新処理
         text.title = title
         text.main_text = main_text
         text.text_status = text_status
@@ -500,26 +526,20 @@ def text_edit(id):
     return render_template('text-edit.html',text=text, word=word_id, select_word=select_word)
 
 
-
-
-
 # 文章削除
 @app.route('/text-delete/<int:id>', methods=['POST'])
 def text_delete(id):
     text = db.get_or_404(Text, id)
 
-    # ログインチェック
     user_id = session.get('user_id')
     if not user_id:
         flash("ログインが必要です", "warning")
         return redirect(url_for('login'))
 
-    # ユーザー判定
     if text.user_id != user_id:
         flash("他ユーザーの文章は削除できません", "error")
         return redirect(url_for('mypage'))
     
-    # データベース削除処理
     db.session.delete(text)
     db.session.commit()
     
@@ -527,19 +547,15 @@ def text_delete(id):
     return redirect(url_for('mypage'))
 
 
-
 # 単語いいね登録・解除
 @app.route('/good/word/<int:word_id>', methods=['POST'])
 def good_word(word_id):
-    # 未ログインフラッシュメッセージ
     if 'user_id' not in session:
         return jsonify({
             "error": 'いいね機能を使うには<a href="' + url_for('login') + '">ログイン</a>してください'
         }), 401
-    # ユーザーID取得
     user_id = session['user_id']
 
-    # ユーザーのいいね状態取得、更新
     like = Good_word.query.filter_by(word_id=word_id, user_id=user_id).first()
     if like:
         db.session.delete(like)
@@ -550,26 +566,20 @@ def good_word(word_id):
         is_good = True
     db.session.commit()
 
-    # いいね数取得
     good_count = Good_word.query.filter_by(word_id=word_id).count()
 
     return jsonify({"is_good":is_good, "good_count":good_count})
-    
-        
 
 
 # 文章いいね登録・解除
 @app.route('/good/text/<int:text_id>', methods=['POST'])
 def good_text(text_id):
-    # 未ログインフラッシュメッセージ
     if 'user_id' not in session:
         return jsonify({
             "error": 'いいね機能を使うには<a href="' + url_for('login') + '">ログイン</a>してください'
         }), 401
-    # ユーザーID取得
     user_id = session['user_id']
 
-    # ユーザーのいいね状態取得、更新
     like = Good_text.query.filter_by(text_id=text_id,user_id=user_id).first()
     if like:
         db.session.delete(like)
@@ -580,10 +590,70 @@ def good_text(text_id):
         is_good = True
     db.session.commit()
 
-    # いいね数取得
     good_count = Good_text.query.filter_by(text_id=text_id).count()
 
     return jsonify({"is_good":is_good, "good_count":good_count})
+
+
+# 管理者画面
+@app.route('/admin', methods=['GET', 'POST'])
+def admin():
+    if not session.get('is_admin'):
+        flash('管理者としてログインしてください')
+        return redirect(url_for('login'))
+
+    if request.method == 'POST':
+        data = request.get_json()
+        word_id = data.get('word_id')
+        genre_ids = set(data.get('genre_ids', []))
+
+        if not word_id:
+            return jsonify({'error': '単語を選択してください'}), 400
+
+        existing = Word_genre.query.filter_by(word_id=word_id).all()
+        existing_ids = {wg.genre_id for wg in existing}
+
+        for wg in existing:
+            if wg.genre_id not in genre_ids:
+                db.session.delete(wg)
+
+        for genre_id in genre_ids - existing_ids:
+            db.session.add(Word_genre(word_id=word_id, genre_id=genre_id))
+
+        db.session.commit()
+
+        return jsonify({'success': True})
+
+    genre_filter = request.args.get('genre_filter', 'all')
+
+    words = Word.query.all()
+
+    items = []
+    for word in words:
+        genre_ids = [wg.genre_id for wg in Word_genre.query.filter_by(word_id=word.id).all()]
+
+        if genre_filter == 'has' and not genre_ids:
+            continue
+        if genre_filter == 'none' and genre_ids:
+            continue
+
+        items.append({
+            'id': word.id,
+            'word': word.word,
+            'reading': word.reading,
+            'mean': word.mean,
+            'genre_ids': genre_ids
+        })
+
+    if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+        return jsonify({
+            'items': items,
+            'genres': [{'id': g.id, 'genre': g.genre} for g in Genre.query.all()]
+        })
+
+    genres = Genre.query.all()
+    return render_template('admin.html', items=items, genres=genres, genre_filter=genre_filter)
+
 
 
 if __name__ == "__main__":
