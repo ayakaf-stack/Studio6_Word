@@ -321,7 +321,7 @@ def contents():
             texts = query.all()
             texts.sort(key=lambda t:len(t.goods),reverse=True)
         elif sort == 'date_asc':
-            texts = query.order_by(Text.id.acs()).all()
+            texts = query.order_by(Text.id.asc()).all()
         elif sort == 'date_desc':
             texts = query.order_by(Text.id.desc()).all()
         else:

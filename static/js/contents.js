@@ -18,10 +18,29 @@ document.addEventListener("DOMContentLoaded", () => {
             btn.classList.add("selected");
 
             genreList.style.display = currentType === "word" ? "flex" : "none";
-
+            
+            updateSortOptions();
             fetchAndRender();
         });
     });
+
+    function updateSortOptions() {
+        if (currentType === "word") {
+            sortSelect.innerHTML = `
+                <option value="">並び替え</option>
+                <option value="aiueo_asc">あいうえお順(昇順)</option>
+                <option value="aiueo_desc">あいうえお順(降順)</option>
+                <option value="good_desc">いいねが多い順</option>
+            `;
+        } else {
+            sortSelect.innerHTML = `
+                <option value="">並び替え</option>
+                <option value="date_desc">登録日が新しい順</option>
+                <option value="date_asc">登録日が古い順</option>
+                <option value="good_desc">いいねが多い順</option>
+            `;
+        }
+    }
 
     // キーワード検索(即時反映)
     searchInput.addEventListener("input", () => {
