@@ -56,8 +56,14 @@
             </li>
         {% else %}
             <li class="text_item">
-                文章タイトル:{{ item.title }} <br>
-                文章本文:{{ item.main_text }} <br>
+                <span class="text_label">タイトル</span>
+                <p class="text_title_display">{{ item.title }}</p>
+
+                <details class="text_drawer">
+                    <summary class="drawer_btn">本文を表示</summary>
+                    <p class="drawer_content">{{ item.main_text }}</p>
+                </details>
+
                 <form class="good-form" action="{{ url_for('good_text', text_id=item.id) }}" method="POST">
                     <button type="submit" class="good-button">{{ '❤️' if item.is_good else '🤍' }}</button>
                     <span class="good-count">{{ item.good_count }}</span>

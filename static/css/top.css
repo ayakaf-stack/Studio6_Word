@@ -104,3 +104,89 @@ body {
     height: 1px; 
     background-color: lightgray; 
 }
+
+.good-form {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 10px;
+}
+
+.good-button {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 1px solid var(--color-red);
+    background: var(--color-surface);
+    font-size: 1.1rem;
+    line-height: 1;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.15s ease, background 0.2s ease;
+}
+
+.good-button:active {
+    transform: scale(0.92);
+}
+
+.good-count {
+    font-family: var(--font-body);
+    font-size: 0.85rem;
+    color: var(--color-text-muted);
+    min-width: 1.2em;
+    text-align: left;
+}
+
+#flash-messages {
+    max-width: 640px;
+    margin: 0 auto 20px;
+}
+
+.flash-message {
+    background: rgba(184, 67, 63, 0.14);
+    border: 1px solid var(--color-red);
+    color: var(--color-text);
+    padding: 10px 16px;
+    border-radius: 2px;
+    font-size: 0.9rem;
+    text-align: center;
+}
+
+.flash-message a {
+    display: inline;
+}
+
+.text_label {
+    display: block;
+    font-size: 0.8rem;
+    color: #8ea2ab;
+    letter-spacing: 0.1em;
+    margin-bottom: 6px;
+}
+
+.text_title_display {
+    font-family: "ヒラギノ明朝 ProN", "Hiragino Mincho ProN", serif;
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: #efe8d8;
+    margin: 0 0 14px;
+}
+
+.drawer_btn {
+    font-size: 0.85rem;
+    color: #c99a4a;
+    cursor: pointer;
+    display: inline-block;
+    margin-top: 6px;
+    list-style: none;
+}
+
+.drawer_btn::-webkit-details-marker {
+    display: none;
+}
+
+.drawer_btn::marker {
+    display: none;
+}

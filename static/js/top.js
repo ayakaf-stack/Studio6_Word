@@ -50,22 +50,17 @@ document.addEventListener("DOMContentLoaded", () => {
         textListArea.innerHTML = '<p class="section-title">この単語から作成された文章</p>';
 
         data.texts.forEach(text => {
-        const div = document.createElement("div");
-        div.className = "text_item";
-
+            const div = document.createElement("div");
+            div.className = "text_item";
             div.innerHTML = `
-                <div class="text_main">
-                    <p class="text_title_row">
-                        <span class="label">タイトル</span>
-                        <span class="value">${text.title}</span>
-                    </p>
-                    <div class="text_content_row">
-                        <details class="text_drawer">
-                            <summary class="drawer_btn">文章を見る</summary>
-                            <p class="drawer_content">${text.main_text}</p>
-                        </details>
-                    </div>
-                </div>
+                <span class="text_label">タイトル</span>
+                <p class="text_title_display">${text.title}</p>
+
+                <details class="text_drawer">
+                    <summary class="drawer_btn">本文を表示</summary>
+                    <p class="drawer_content">${text.main_text}</p>
+                </details>
+
                 <form class="good-form" action="/good/text/${text.id}" method="POST">
                     <button type="submit" class="good-button">${text.is_good ? "❤️" : "🤍"}</button>
                     <span class="good-count">${text.good_count}</span>
