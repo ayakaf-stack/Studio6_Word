@@ -40,6 +40,8 @@
 
     <div id="text_list_area">
         <p class="section-title">この単語から作成された文章</p>
+
+        <div class="text_scroll_list">
             {% for text, good_data in text.items() %}
                 <div class="text_item">
                     <span class="text_label">タイトル</span>
@@ -56,6 +58,7 @@
                     </form>
                 </div>
             {% endfor %}
+        </div>
     </div>
 </div>
 
