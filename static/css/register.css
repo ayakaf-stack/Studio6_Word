@@ -25,7 +25,7 @@ body {
 }
 
 .form {
-  width: 500px;
+  width: 400px;
   margin: 50px auto;
 }
 
@@ -53,4 +53,10 @@ input::placeholder {
 
 button {
   margin-top: 20px;
+}
+
+@media (width <= 400px){
+  .form-group {
+    flex-direction: column;
+  }
 }
