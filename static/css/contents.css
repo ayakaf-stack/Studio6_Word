@@ -322,7 +322,7 @@ footer,
 }
 
 .drawer_content {
-    font-size: 0.95rem;
+    font-size: 1.1rem;
     color: var(--color-text);
     max-width: 480px;
     margin: 10px auto 0;

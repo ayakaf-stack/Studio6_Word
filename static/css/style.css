@@ -62,7 +62,7 @@ a {
   color: #c99a4a;
   transition: 0.3s;
   text-decoration: none;
-  display: block;
+  display: inline-block;
 }
 
 h1 {
