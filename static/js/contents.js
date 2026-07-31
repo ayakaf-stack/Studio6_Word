@@ -114,7 +114,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
                         <details class="text_drawer">
                             <summary class="drawer_btn">本文を表示</summary>
-                            <p class="drawer_content">${item.main_text}</p>
+                            <p class="drawer_content white-space">${item.main_text}</p>
                         </details>
 
                         <form class="good-form" action="/good/text/${item.id}" method="POST">

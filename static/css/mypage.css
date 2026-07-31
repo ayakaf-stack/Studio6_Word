@@ -1,30 +1,11 @@
 @charset "UTF-8";
 
 html {
-  font-size:62.5%;
-  font-family:"ヒラギノ明朝 ProN", "Hiragino Mincho ProN", serif;
-  color: white;
   background-color: #062c54;
-  text-align: center;
-}
-body {
-  font-size:1.4rem;
-}
-*, *::before, *::after {
-  box-sizing:border-box;
-}
-.clearfix::after {
-  content:'';
-  display:block;
-  clear:both;
-}
-
-h1 {
-  font-size:2.4rem
 }
 
 h2 {
-  font-size:1.6rem
+  font-size:1.4rem
 }
 
 .container {
@@ -38,7 +19,7 @@ h2 {
 }
 
 .item + .item {
-  border-left: 1px solid white; /* 間に引く線の色と太さ */
+  border-left: 1px solid rgba(239, 232, 216, 0.14);
 }
 
 ul {
@@ -49,7 +30,6 @@ ul {
 li{
   margin: 1rem auto;
   padding: 1rem;
-  /* background-color: rgba(255, 255, 255, 0.1); */
   max-width: 350px;
   text-align: left;
  }
@@ -113,6 +93,9 @@ li{
 .value {
   flex: 1;
   min-width: 0;
-  font-size: 1.4rem;
   word-break: break-word;
+}
+
+.container {
+  font-size: 64.5%;
 }

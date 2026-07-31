@@ -22,18 +22,6 @@ body {
     line-height: 1.8;
 }
 
-a {
-    color: var(--color-gold);
-    text-decoration: none;
-    border-bottom: 1px solid transparent;
-    transition: border-color 0.2s ease;
-}
-
-a:hover,
-a:focus-visible {
-    border-color: var(--color-gold);
-}
-
 .flash-message a {
     display: inline;
 }
@@ -289,7 +277,6 @@ a:focus-visible {
     display: inline-block;
     font-size: 0.85rem;
     color: var(--color-gold);
-    border-bottom: 1px solid var(--color-gold);
 }
 
 /* -------------------- 該当なし表示 -------------------- */

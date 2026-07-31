@@ -1,29 +1,10 @@
 @charset "UTF-8";
 
 html {
-  font-family:"ヒラギノ明朝 ProN", "Hiragino Mincho ProN", serif;
-  color: white;
   background-color: #062c54;
-  text-align: center;
-}
-h1 {
-  font-size: larger;
-  color: #c99a4a;
 }
 
-body {
-  font-size:1.4rem;
-}
-*, *::before, *::after {
-  box-sizing:border-box;
-}
-.clearfix::after {
-  content:'';
-  display:block;
-  clear:both;
-}
-
-form {
+.form {
   width: 500px;
   margin: 0 auto;
   max-width: 500px;

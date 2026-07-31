@@ -1,9 +1,5 @@
 @charset "UTF-8";
 
-html {
-    text-align: center;
-}
-
 body {
     background-color: #062c54;
     transition: background-color 1.0s cubic-bezier(0.4, 0, 0.2, 1);
@@ -102,7 +98,7 @@ body {
     content: "";
     flex: 1; 
     height: 1px; 
-    background-color: lightgray; 
+    background-color: rgba(239, 232, 216, 0.14); 
 }
 
 .good-form {
