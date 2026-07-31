@@ -38,7 +38,7 @@
                         </form>
                         <div class="text-body">
                             <p><span class="label">タイトル</span><span class="value">{{ text.title }}</span></p>
-                            <p><span class="label">文章本文</span><span class="value">{{ text.main_text }}</span></p>
+                            <p><span class="label">文章本文</span><span class="value white-space">{{ text.main_text }}</span></p>
                         </div>
                     </li>
                 {% endfor %}
@@ -51,7 +51,7 @@
                     <li class="my_text_item">
                         <div class="my_text_body">
                             <p><span class="label">タイトル</span><span class="value">{{ text.title }}</span></p>
-                            <p><span class="label">文章本文</span><span class="value">{{ text.main_text }}</span></p>
+                            <p><span class="label">文章本文</span><span class="value white-space">{{ text.main_text }}</span></p>
                             <p><span class="label">いいね数</span><span class="value">{{ good_count }}</span></p>
                             <p><span class=" label">ステータス</span><span class="value">{{ '公開' if text.text_status == 0 else '非公開' }}</span></p>
 
