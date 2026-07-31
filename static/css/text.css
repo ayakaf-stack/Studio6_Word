@@ -4,6 +4,10 @@ html {
   background-color: #062c54;
 }
 
+h3 {
+  font-size: 1.2rem;
+}
+
 .form-group {
     display:flex;
     justify-content: center;
@@ -14,7 +18,7 @@ html {
 }
 
 .form-group label {
-  width: 80px;
+  width: 100px;
   text-align: right;
   flex-shrink: 0;
 }
@@ -34,10 +38,20 @@ html {
 }
 
 .form-actions {
-  margin: 2rem 0;
+  margin: 1rem 0;
 }
 
 a {
   margin-top: 2rem;
 }
 
+.cancel-area {
+  margin-top: 1rem;
+  text-align: center;
+}
+
+.cancel-area a {
+  display: inline-block;
+  margin-top: 0;
+  font-size: 1.2rem;
+}
