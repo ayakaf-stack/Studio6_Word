@@ -9,18 +9,6 @@ h1 {
   color: #c99a4a;
 }
 
-body {
-  font-size:1.4rem;
-}
-*, *::before, *::after {
-  box-sizing:border-box;
-}
-.clearfix::after {
-  content:'';
-  display:block;
-  clear:both;
-}
-
 .form {
   width: 400px;
   margin: 50px auto;

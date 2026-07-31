@@ -9,19 +9,6 @@
     --font-display: "Hiragino Mincho ProN", "HGS明朝E", serif;
 }
 
-* {
-    box-sizing: border-box;
-}
-
-body {
-    background: var(--color-bg);
-    color: var(--color-text);
-    font-family: var(--font-body);
-    margin: 0;
-    padding: 40px 20px 80px;
-    line-height: 1.8;
-}
-
 .flash-message a {
     display: inline;
 }

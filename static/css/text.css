@@ -4,16 +4,6 @@ html {
   background-color: #062c54;
 }
 
-body {
-  font-size:1.4rem;
-}
-
-.clearfix::after {
-  content:'';
-  display:block;
-  clear:both;
-}
-
 .form-group {
     display:flex;
     justify-content: center;
