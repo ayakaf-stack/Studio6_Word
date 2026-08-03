@@ -1,6 +1,8 @@
 import pytest
 from random import randint
 from app import app
+from models.models import Text
+from models.extensions import db
 
 # テストクライアントを作成
 @pytest.fixture
@@ -16,7 +18,15 @@ def login_client(client):
 
     with client.session_transaction() as session:
         session["user_id"] = 14 
+        session["user_name"] = "aaa"
 
+    return client
+
+# 管理者ログイン済み
+@pytest.fixture
+def admin_client(client):
+    with client.session_transaction() as session:
+        session["is_admin"] = True
     return client
 
 
@@ -35,8 +45,8 @@ def test_login_safe(client):
     response = client.post(
         "/login",
         data={
-            "email": "takujiozaki@gmail.com",
-            "password": "abcd1234"
+            "email": "aaa@aaa.com",
+            "password": "testtest"
         }
     )
 
@@ -48,8 +58,8 @@ def test_login_fail(client):
     response = client.post(
         "/login",
         data={
-            "email": "takujiozaki@gmail.com",
-            "password": "abcd4567"
+            "email": "aaa@aaa.com",
+            "password": "abcd1234"
         },
         follow_redirects=True
      )
@@ -76,7 +86,3 @@ def test_make_sentence(login_client):
 
     assert "文章を作成しました" in html
 
-
-
-def test_db_check():
-    print("\nDB:", app.config["SQLALCHEMY_DATABASE_URI"])
