@@ -110,23 +110,40 @@ main > p {
 
 /* いいねボタン */
 
+/* いいねボタン */
+
 .good-button {
     width: 40px;
     height: 40px;
-    border-radius: 50%;
-    border: 1px solid #b8433f;
-    background: #1a2834;
-    font-size: 1.1rem;
-    line-height: 1;
-    cursor: pointer;
+    border: none;
+    background: transparent;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    transition: transform 0.15s ease, background 0.2s ease;
+    position: relative;
+    cursor: pointer;
 }
 
-.good-button:active {
-    transform: scale(0.92);
+.bookmark-icon {
+    fill: none;
+    stroke: #c99a4a;
+    stroke-width: 1.6;
+    stroke-linejoin: round;
+}
+
+.good-button.is-liked .bookmark-icon {
+    fill: #c99a4a;
+}
+
+.good-button.is-liked::after {
+    content: "";
+    position: absolute;
+    top: 8px;
+    left: 2px;
+    width: 9px;
+    height: 9px;
+    background: #c99a4a;
+    clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
 }
 
 .white-space {

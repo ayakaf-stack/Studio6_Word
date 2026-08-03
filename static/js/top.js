@@ -40,14 +40,18 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const wordForm = document.getElementById("word_good_form");
         wordForm.action = `/good/word/${data.word.id}`;
-        wordForm.querySelector(".good-button").textContent = data.is_good ? "❤️" : "🤍";
+
+        const wordButton = wordForm.querySelector(".good-button");
+        wordButton.classList.toggle("is-liked", data.is_good);
+
         wordForm.querySelector(".good-count").textContent = data.good_count;
 
         document.getElementById("text_new_link").href = `/text-new/${data.word.id}`;
 
         // 文章一覧を書き換え
         const textListArea = document.getElementById("text_list_area");
-        textListArea.innerHTML = '<p class="section-title">この単語から作成された文章</p>';
+        textListArea.innerHTML = '<div class="text_scroll_list"></div>';
+        const scrollList = textListArea.querySelector(".text_scroll_list");
 
         data.texts.forEach(text => {
             const div = document.createElement("div");
@@ -62,11 +66,15 @@ document.addEventListener("DOMContentLoaded", () => {
                 </details>
 
                 <form class="good-form" action="/good/text/${text.id}" method="POST">
-                    <button type="submit" class="good-button">${text.is_good ? "❤️" : "🤍"}</button>
+                    <button type="submit" class="good-button${text.is_good ? " is-liked" : ""}" aria-label="お気に入り">
+                        <svg class="bookmark-icon" width="18" height="22" viewBox="0 0 24 30">
+                            <path d="M5 3 H19 V27 L12 20.5 L5 27 Z"/>
+                        </svg>
+                    </button>
                     <span class="good-count">${text.good_count}</span>
                 </form>
             `;
-            textListArea.appendChild(div);
+            scrollList.appendChild(div);
         });
     });
 });

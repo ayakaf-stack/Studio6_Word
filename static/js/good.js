@@ -1,7 +1,6 @@
 console.log("good.js loaded");
 
 document.addEventListener("DOMContentLoaded", () => {
-    // 動的に追加されたフォームにも効くよう、documentに1つだけリスナーを付ける
     document.addEventListener("submit", async function (e) {
         const form = e.target;
         if (!form.classList.contains("good-form")) return;
@@ -16,8 +15,8 @@ document.addEventListener("DOMContentLoaded", () => {
             return;
         }
 
-        form.querySelector(".good-button").textContent =
-            data.is_good ? "❤️" : "🤍";
+        const button = form.querySelector(".good-button");
+        button.classList.toggle("is-liked", data.is_good);
 
         const countEl = form.querySelector(".good-count");
         if (countEl) {

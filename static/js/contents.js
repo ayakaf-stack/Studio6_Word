@@ -101,27 +101,35 @@ document.addEventListener("DOMContentLoaded", () => {
                     読み:${item.reading} <br>
                     意味:${item.mean} <br>
                     <form class="good-form" action="/good/word/${item.id}" method="POST">
-                        <button type="submit" class="good-button">${item.is_good ? "❤️" : "🤍"}</button>
+                        <button type="submit" class="good-button${item.is_good ? " is-liked" : ""}" aria-label="お気に入り">
+                            <svg class="bookmark-icon" width="18" height="22" viewBox="0 0 24 30">
+                                <path d="M5 3 H19 V27 L12 20.5 L5 27 Z"/>
+                            </svg>
+                        </button>
                         <span class="good-count">${item.good_count}</span>
                     </form>
                     <a href="/text-new/${item.id}">文章作成</a>
                 `;
             } else {
                 li.className = "text_item";
-                    li.innerHTML = `
-                        <span class="text_label">タイトル</span>
-                        <p class="text_title_display">${item.title}</p>
+                li.innerHTML = `
+                    <span class="text_label">タイトル</span>
+                    <p class="text_title_display">${item.title}</p>
 
-                        <details class="text_drawer">
-                            <summary class="drawer_btn">本文を表示</summary>
-                            <p class="drawer_content white-space">${item.main_text}</p>
-                        </details>
+                    <details class="text_drawer">
+                        <summary class="drawer_btn">本文を表示</summary>
+                        <p class="drawer_content white-space">${item.main_text}</p>
+                    </details>
 
-                        <form class="good-form" action="/good/text/${item.id}" method="POST">
-                            <button type="submit" class="good-button">${item.is_good ? "❤️" : "🤍"}</button>
-                            <span class="good-count">${item.good_count}</span>
-                        </form>
-                    `;
+                    <form class="good-form" action="/good/text/${item.id}" method="POST">
+                        <button type="submit" class="good-button${item.is_good ? " is-liked" : ""}" aria-label="お気に入り">
+                            <svg class="bookmark-icon" width="18" height="22" viewBox="0 0 24 30">
+                                <path d="M5 3 H19 V27 L12 20.5 L5 27 Z"/>
+                            </svg>
+                        </button>
+                        <span class="good-count">${item.good_count}</span>
+                    </form>
+                `;
             }
 
             listContainer.appendChild(li);
