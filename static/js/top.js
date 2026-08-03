@@ -48,9 +48,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
         document.getElementById("text_new_link").href = `/text-new/${data.word.id}`;
 
-        // 文章一覧を書き換え
+        // 文章一覧を書き換え(見出し + スクロール枠を復元)
         const textListArea = document.getElementById("text_list_area");
-        textListArea.innerHTML = '<div class="text_scroll_list"></div>';
+        textListArea.innerHTML = `
+            <p class="section-title">この単語から作成された文章</p>
+            <div class="text_scroll_list"></div>
+        `;
         const scrollList = textListArea.querySelector(".text_scroll_list");
 
         data.texts.forEach(text => {
