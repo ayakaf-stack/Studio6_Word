@@ -75,3 +75,35 @@ good_words
 good_texts
 
 ---
+
+## TEST
+### 単体テスト環境
+
+ディレクトリ構成
+- testsディレクトリ配下に単体テストプログラムを追加
+```
+.
+├── app.py
+├── models
+│   ├── extensions.py
+│   └── models.py
+├── README.md
+├── requiremenst.txt
+├── static
+│   ├── css
+│   └── js
+├── templates
+└── tests
+    └── test_app.py
+```
+### 実行コード
+簡易表示
+```
+python -m pytest -q
+```
+詳細表示
+```
+python -m pytest -vv
+```
+
+
