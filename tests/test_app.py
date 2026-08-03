@@ -1,4 +1,5 @@
 import pytest
+from random import randint
 from app import app
 
 # テストクライアントを作成
@@ -8,6 +9,16 @@ def client():
 
     with app.test_client() as client:
         yield client
+
+# ログイン済みユーザー
+@pytest.fixture
+def login_client(client):
+
+    with client.session_transaction() as session:
+        session["user_id"] = 12 
+
+    return client
+
 
 # トップページのテスト
 def test_index(client):
@@ -47,3 +58,25 @@ def test_login_fail(client):
     assert response.status_code == 200
     # フラッシュメッセージを確認
     assert "ログインに失敗しました" in html
+
+# 新規文章登録テスト(成功)
+def test_make_sentence(login_client):
+    print(app.config["SQLALCHEMY_DATABASE_URI"]) 
+    response = login_client.post(
+            "/text-new/29",
+            data={
+                "title":"投稿テスト単体テスト",
+                "main_text":f"山眠るに関するテスト投稿{randint(1,100)}"
+            },
+            follow_redirects = True
+         )
+      
+    assert response.status_code == 200
+    html = response.get_data(as_text=True)
+
+    assert "文章を作成しました" in html
+
+
+
+def test_db_check():
+    print("\nDB:", app.config["SQLALCHEMY_DATABASE_URI"])
