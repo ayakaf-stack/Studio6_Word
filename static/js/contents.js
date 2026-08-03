@@ -97,9 +97,9 @@ document.addEventListener("DOMContentLoaded", () => {
             if (type === "word") {
                 li.className = "word_item";
                 li.innerHTML = `
-                    単語:${item.word} <br>
-                    読み:${item.reading} <br>
-                    意味:${item.mean} <br>
+                    <p><span class="item_word">${item.word}</span></p>
+                    <p><span class="item_reading">【${item.reading}】</span></p>
+                    <p><span class="item_mean">${item.mean}</span></p>
                     <form class="good-form" action="/good/word/${item.id}" method="POST">
                         <button type="submit" class="good-button${item.is_good ? " is-liked" : ""}" aria-label="お気に入り">
                             <svg class="bookmark-icon" width="18" height="22" viewBox="0 0 24 30">
