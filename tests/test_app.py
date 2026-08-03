@@ -15,7 +15,7 @@ def client():
 def login_client(client):
 
     with client.session_transaction() as session:
-        session["user_id"] = 12 
+        session["user_id"] = 14 
 
     return client
 
