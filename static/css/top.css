@@ -193,25 +193,6 @@ a[href="/contents"] {
     text-align: left;
 }
 
-.good-button {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    border: 1px solid var(--color-red);
-    background: var(--color-surface);
-    font-size: 1.1rem;
-    line-height: 1;
-    cursor: pointer;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    transition: transform 0.15s ease, background 0.2s ease;
-}
-
-.good-button:active {
-    transform: scale(0.92);
-}
-
 #flash-messages {
     max-width: 640px;
     margin: 0 auto 20px;
