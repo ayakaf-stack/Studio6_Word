@@ -106,4 +106,14 @@ python -m pytest -q
 python -m pytest -vv
 ```
 
+### ブラウザテスト(Selenium)
+インストール
+```
+pip install selenium
+```
+[selenium](https://www.selenium.dev/ja/)
+
+
+
+
 
