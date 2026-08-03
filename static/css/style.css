@@ -149,3 +149,115 @@ main > p {
 .white-space {
     white-space: pre-wrap;
 }
+
+a.site_title {
+  position: relative;
+  padding: 12px 64px;
+  font-family: 'Noto Serif JP', serif;
+  font-size: 28px;
+  letter-spacing: 0.24em;
+  color: white;
+  font-weight: 400;
+  display: inline-block;
+  box-sizing: border-box;
+  max-width: 520px;
+  text-align: center; 
+  margin: 24px;
+  margin-inline: auto;
+}
+
+.site_title::before, .site_title::after {
+  content:'';
+  position: absolute;
+  background: rgba(201, 154, 74, 0.7);
+  width: 55px;
+  height: 1px;
+  rotate: -65deg;
+  display: inline-block;
+}
+
+.site_title::before {
+  top: 35%;
+  left: 0;
+}
+
+.site_title::after {
+  bottom: 35%;
+  right: 0;
+}
+
+.site_title span::before, .site_title span::after {
+  content:'';
+  position: absolute;
+  background: rgba(201, 154, 74, 0.7);
+  width: 35px;
+  height: 1px;
+  display: inline-block;
+}
+
+.site_title span::before {
+  left: 30px;
+  top: 4px;
+}
+
+.site_title span::after {
+  right: 30px;
+  bottom: 4px;
+}
+
+a.site_title {
+    text-shadow: 
+    0 0.5px 1px rgba(0, 0, 0, 0.8),
+    0 0 1px rgba(0, 0, 0, 0.9);
+}
+
+.site_title::before, .site_title::after,
+.site_title span::before, .site_title span::after {
+  box-shadow: 0 0.5px 1px rgba(0, 0, 0, 0.5);
+}
+
+body {
+    background-color: var(--color-bg, #062c54);
+
+    background-image: 
+        radial-gradient(circle at center, transparent 40%, rgba(0, 0, 0, 0.45) 100%);
+
+    background-size: 100% 100%, 8px 8px;
+    background-attachment: fixed;
+}
+
+body::before,
+body::after {
+  content: '';
+  position: fixed;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 1px; 
+  height: 70vh; 
+  
+  background: linear-gradient(
+    180deg, 
+    transparent 0%, 
+    rgba(201, 154, 74, 0.4) 30%,
+    rgba(201, 154, 74, 0.4) 70%, 
+    transparent 100%
+  );
+  pointer-events: none;
+  z-index: 10;
+}
+
+body::before {
+  left: 50px;
+}
+
+/* 右側のライン位置 */
+body::after {
+  right: 50px;
+}
+
+@media (max-width: 768px) {
+  body::before,
+  body::after {
+    display: none;
+  }
+}

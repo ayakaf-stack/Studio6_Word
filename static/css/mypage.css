@@ -40,7 +40,7 @@ h2 {
 }
 
 .scroll_list::-webkit-scrollbar {
-  width: 2px;
+  width: 1px;
 }
 
 .scroll_list::-webkit-scrollbar-track {

@@ -222,6 +222,19 @@
     margin-bottom: 10px;
 }
 
+.item_mean,.item_reading{
+    font-size: 80%;
+}
+
+.item_word{
+    font-size: 1.8rem;
+}
+
+p {
+    margin: 0;
+    padding: 0;
+}
+
 /* -------------------- いいねボタン(朱印風) -------------------- */
 
 .good-form {
