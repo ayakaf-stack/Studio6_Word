@@ -68,18 +68,13 @@ def test_login_to_mypage():
     assert h2_elements[0].text == "ログインユーザー：ozaki"
 
     # ログアウト
-    # クラス属性.menuを取得
-    menu_tag = driver.find_element(By.CLASS_NAME,"menu")
-    # .menu 内のaタグ群を取得
-    a_tag_list = menu_tag.find_elements(By.TAG_NAME,"a")  
-    # 先頭がログアウトリンク
-    logout = a_tag_list[0]
+    logout = driver.find_element(By.CLASS_NAME,"logout-btn")
     # ログアウトクリック
     logout.click()
 
 
     # 1秒停止
-    time.sleep(1)
+    time.sleep(10)
 
     # ログアウトメッセージ(flash)の取得
     main_element = driver.find_element(By.TAG_NAME,"main")
