@@ -230,7 +230,7 @@ def mypage():
     user_id = session["user_id"]
 
     user_id = session['user_id']
-    user = User.query.get_or_404(user_id)
+    user = db.get_or_404(User, user_id)
 
     good_words = Good_word.query.filter_by(user_id=user_id).all()
     liked_words = []
@@ -478,7 +478,7 @@ def text_edit(id):
         return redirect(url_for('mypage'))
     
     word_id = text.word
-    select_word = Word.query.get(word_id) if word_id else None
+    select_word = db.session.get(Word, word_id) if word_id else None
     
     if request.method == 'POST':
         title = request.form.get("title", "").strip()
@@ -486,7 +486,7 @@ def text_edit(id):
         text_status_val = request.form.get("text_status", "0")
         text_status = int(text_status_val) if text_status_val.isdigit() else 0
 
-        select_word = Word.query.get(text.word) if text.word else None
+        select_word = db.session.get(Word, text.word) if text.word else None
 
         render_error = lambda: render_template(
             "text-edit.html",
