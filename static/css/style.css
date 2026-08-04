@@ -48,8 +48,10 @@ body {
   bottom: 0;
   left: 50%;
   transform: translateX(-50%);
-  width: 640px;
-  max-width: 90%;
+  
+  /* width と max-width の関係を修正 */
+  width: 90%;
+  max-width: 640px;
   height: 1px;
   
   background: linear-gradient(
@@ -115,8 +117,6 @@ main > p {
   max-width: 640px;
   margin: 0 auto 20px;
 }
-
-/* いいねボタン */
 
 /* いいねボタン */
 
@@ -259,16 +259,8 @@ body::before {
   left: 50px;
 }
 
-/* 右側のライン位置 */
 body::after {
   right: 50px;
-}
-
-@media (max-width: 768px) {
-  body::before,
-  body::after {
-    display: none;
-  }
 }
 
 .logout-btn {
@@ -284,4 +276,49 @@ body::after {
 
 .logout-btn:hover {
   opacity: 0.7;
+}
+
+/* レスポンシブ対応 */
+
+@media (max-width: 768px) {
+  body {
+    font-size: 1.1rem;
+    padding: 20px 15px 60px;
+  }
+
+  body::before,
+  body::after {
+    display: none;
+  }
+
+  .header {
+    font-size: 1.5rem;
+    margin-bottom: 20px;
+  }
+
+  a.site_title {
+    font-size: 20px;
+    padding: 8px 40px;
+    letter-spacing: 0.15em;
+    max-width: 100%;
+    margin: 16px auto;
+  }
+
+  .site_title::before {
+    left: -5px;
+    width: 40px;
+  }
+  .site_title::after {
+    right: -5px;
+    width: 40px;
+  }
+
+  .site_title span::before {
+    left: 15px;
+    width: 25px;
+  }
+  .site_title span::after {
+    right: 15px;
+    width: 25px;
+  }
 }
