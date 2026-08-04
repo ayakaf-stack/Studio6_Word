@@ -9,7 +9,12 @@ from itsdangerous import URLSafeTimedSerializer, SignatureExpired, BadSignature
 from flask_mail import Mail, Message
 from dotenv import load_dotenv
 
-
+# ログインチェック用のコード
+def login_check():
+    if"user_id" not in session:
+        flash("ログインが必要です", "warning")
+        return redirect(url_for("login"))
+    return None
 
 load_dotenv()
 
@@ -219,9 +224,10 @@ def register():
 # マイページ
 @app.route('/mypage', methods=['GET'])
 def mypage():
-    if 'user_id' not in session:
-        flash('ログインが必要です')
-        return redirect(url_for('login'))
+    result = login_check()
+    if result:
+        return result
+    user_id = session["user_id"]
 
     user_id = session['user_id']
     user = User.query.get_or_404(user_id)
@@ -229,13 +235,13 @@ def mypage():
     good_words = Good_word.query.filter_by(user_id=user_id).all()
     liked_words = []
     for gw in good_words:
-        word = Word.query.get(gw.word_id)
+        word = db.session.get(Word, gw.word_id)
         liked_words.append(word)
 
     good_texts = Good_text.query.filter_by(user_id=user_id).all()
     liked_texts = []
     for gt in good_texts:
-        text = Text.query.get(gt.text_id)
+        text = db.session.get(Text, gt.text_id)
         liked_texts.append(text)
 
     my_texts = Text.query.filter_by(user_id=user_id).all()
@@ -253,7 +259,7 @@ def mypage():
     )
 
 # ログアウト
-@app.route('/logout')
+@app.route('/logout', methods=['POST'])
 def logout():
     if 'user_id' in session:
         session.clear()
@@ -393,13 +399,13 @@ def contents():
 # 新規文章作成
 @app.route('/text-new/<int:id>', methods=['GET', 'POST'])
 def text_new(id):
-    user_id = session.get('user_id')
-    if not user_id:
-        flash("ログインが必要です", "warning")
-        return redirect(url_for('login'))
+    result = login_check()
+    if result:
+        return result
+    user_id = session["user_id"]
     
     word_id = id
-    select_word = Word.query.get(word_id)
+    select_word = db.session.get(Word, word_id)
 
     if request.method == 'POST':
         title = request.form.get("title", "").strip()
@@ -462,8 +468,10 @@ def text_edit(id):
 
     user_id = session.get('user_id')
     if not user_id:
-        flash("ログインが必要です", "warning")
-        return redirect(url_for('login'))
+        result = login_check()
+        if result:
+            return result
+        user_id = session["user_id"]
 
     if text.user_id != user_id:
         flash("他ユーザーの文章は編集できません", "error")
@@ -533,8 +541,10 @@ def text_delete(id):
 
     user_id = session.get('user_id')
     if not user_id:
-        flash("ログインが必要です", "warning")
-        return redirect(url_for('login'))
+        result = login_check()
+        if result:
+            return result
+        user_id = session["user_id"]
 
     if text.user_id != user_id:
         flash("他ユーザーの文章は削除できません", "error")

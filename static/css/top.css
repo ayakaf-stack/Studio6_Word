@@ -85,10 +85,18 @@ a[href="/contents"] {
     text-align: center;
 }
 
+/* 文章リスト領域 */
 .text_scroll_list {
     max-height: 400px;
     overflow-y: auto;
-    padding-right: 6px;
+    box-sizing: border-box;
+
+    width: 100%;
+    max-width: 640px; 
+    margin: 0 auto;
+
+    padding-left: 16px;
+    padding-right: 16px;
 }
 
 .text_scroll_list::-webkit-scrollbar {
@@ -97,11 +105,10 @@ a[href="/contents"] {
 
 .text_scroll_list::-webkit-scrollbar-track {
     background: rgba(255, 255, 255, 0.05);
-    border-radius: 3px;
 }
 
 .text_scroll_list::-webkit-scrollbar-thumb {
-    background: #c99a4a;
+    background: rgba(239, 232, 216, 0.25);
     border-radius: 3px;
 }
 
@@ -123,7 +130,7 @@ a[href="/contents"] {
     content: "";
     flex: 1; 
     height: 1px; 
-    background-color: rgba(239, 232, 216, 0.14); 
+    background-color: rgba(239, 232, 216, 0.25); 
 }
 
 .text_item {
