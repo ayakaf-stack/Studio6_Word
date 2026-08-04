@@ -13,48 +13,6 @@
     display: inline;
 }
 
-/* -------------------- サイトタイトル -------------------- */
-
-.header {
-    position: relative;
-    padding-bottom: 18px;
-    margin: 0 0 28px;
-    text-align: center;
-}
-
-.header a {
-    display: inline-block;
-}
-
-.header::after {
-    content: "";
-    position: absolute;
-    bottom: 0;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 150px;
-    height: 2px;
-    background: #e6b422;
-    opacity: 0.7;
-}
-
-/* -------------------- フラッシュメッセージ -------------------- */
-
-#flash-messages {
-    max-width: 640px;
-    margin: 0 auto 20px;
-}
-
-.flash-message {
-    background: rgba(184, 67, 63, 0.14);
-    border: 1px solid var(--color-red);
-    color: var(--color-text);
-    padding: 10px 16px;
-    border-radius: 2px;
-    font-size: 0.9rem;
-    text-align: center;
-}
-
 /* -------------------- タブ(単語/文章) -------------------- */
 
 .tabs {
