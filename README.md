@@ -99,12 +99,14 @@ good_texts
 ### 実行コード
 簡易表示
 ```
-python -m pytest -q
+python -m pytest -q <テストファイル名>
 ```
 詳細表示
 ```
-python -m pytest -vv
+python -m pytest -vv <テストファイル名>
 ```
+
+> <テストファイル名>を省略すると全テストを実行
 
 ### ブラウザテスト(Selenium)
 インストール
