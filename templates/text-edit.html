@@ -28,13 +28,14 @@
         <button type="submit" name="text_status" value="1">下書き保存</button>
     </div>
 
-    <form action="{{ url_for('text_delete', id=text.id) }}" method="post" onsubmit="return confirm('本当に削除しますか？');">
-        <button type="submit">この文章を削除</button>
-    </form>
-
-    <div class="cancel-area">
-        <a href="{{ url_for('mypage') }}">キャンセル</a>
-    </div>
 </form>
+
+<form action="{{ url_for('text_delete', id=text.id) }}" method="post" onsubmit="return confirm('本当に削除しますか？');" class="delete_form">
+    <button type="submit" class="btn-delete">この文章を削除</button>
+</form>
+
+<div class="cancel-area">
+    <a href="{{ url_for('mypage') }}">キャンセル</a>
+</div>
 
 {% endblock %}
