@@ -24,7 +24,7 @@ def test_show_top_page():
     # 終了
     driver.quit()
 
-# ログインテスト
+# ログイン/ログアウトテスト
 def test_login_to_mypage():
     
     # Web Driver
@@ -36,6 +36,8 @@ def test_login_to_mypage():
 
     # 1秒停止
     time.sleep(1)
+
+    # ログイン
 
     # メール入力欄を取得(#id)
     mail = driver.find_element(By.ID,"mail")
@@ -52,7 +54,7 @@ def test_login_to_mypage():
 
     # submitボタン取得
     button = driver.find_element(By.TAG_NAME, "button")
-    # clickする
+    # clickする：ｗｑ！
     button.click()
 
 
@@ -65,5 +67,23 @@ def test_login_to_mypage():
     h2_elements = driver.find_elements(By.TAG_NAME,"h2")
     assert h2_elements[0].text == "ログインユーザー：ozaki"
 
+    # ログアウト
+    # クラス属性.menuを取得
+    menu_tag = driver.find_element(By.CLASS_NAME,"menu")
+    # .menu 内のaタグ群を取得
+    a_tag_list = menu_tag.find_elements(By.TAG_NAME,"a")  
+    # 先頭がログアウトリンク
+    logout = a_tag_list[0]
+    # ログアウトクリック
+    logout.click()
+
+
+    # 1秒停止
+    time.sleep(1)
+
+    # ログアウトメッセージ(flash)の取得
+    main_element = driver.find_element(By.TAG_NAME,"main")
+    flash_message = main_element.find_element(By.TAG_NAME,"p").text
+    assert flash_message == "ログアウトしました"
     # 終了
     driver.quit()
