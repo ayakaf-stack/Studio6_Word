@@ -1,0 +1,89 @@
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+import time
+
+# ブラウザテスト
+
+# トップページ表示
+def test_show_top_page():
+    
+    driver = webdriver.Chrome()
+    # access url
+    url = "http://127.0.0.1:5000/"
+    # アクセス
+    driver.get(url)
+   
+    # ページタイトル<title>取得
+    title = driver.title
+
+    # テスト
+    assert title == "美しい日本語"
+    
+    # 2秒停止
+    time.sleep(2)
+    # 終了
+    driver.quit()
+
+# ログイン/ログアウトテスト
+def test_login_to_mypage():
+    
+    # Web Driver
+    driver = webdriver.Chrome()
+    # access url
+    url = "http://127.0.0.1:5000/login"
+    # access
+    driver.get(url)
+
+    # 1秒停止
+    time.sleep(1)
+
+    # ログイン
+
+    # メール入力欄を取得(#id)
+    mail = driver.find_element(By.ID,"mail")
+    #ユーザーメール入力
+    mail.send_keys("takujiozaki@gmail.com")
+
+    # パスワード入力欄を取得(#Password)
+    password = driver.find_element(By.ID,"Password")
+    # パスワード入力
+    password.send_keys("abcd1234")
+
+    # 1秒停止
+    time.sleep(1)
+
+    # submitボタン取得
+    button = driver.find_element(By.TAG_NAME, "button")
+    # clickする：ｗｑ！
+    button.click()
+
+
+    # 1秒停止
+    time.sleep(1)
+
+    # テスト(ユーザー名、マイページの表示を確認)
+    h1_element = driver.find_element(By.TAG_NAME,"h1").text
+    assert h1_element == "マイページ"
+    h2_elements = driver.find_elements(By.TAG_NAME,"h2")
+    assert h2_elements[0].text == "ログインユーザー：ozaki"
+
+    # ログアウト
+    # クラス属性.menuを取得
+    menu_tag = driver.find_element(By.CLASS_NAME,"menu")
+    # .menu 内のaタグ群を取得
+    a_tag_list = menu_tag.find_elements(By.TAG_NAME,"a")  
+    # 先頭がログアウトリンク
+    logout = a_tag_list[0]
+    # ログアウトクリック
+    logout.click()
+
+
+    # 1秒停止
+    time.sleep(1)
+
+    # ログアウトメッセージ(flash)の取得
+    main_element = driver.find_element(By.TAG_NAME,"main")
+    flash_message = main_element.find_element(By.TAG_NAME,"p").text
+    assert flash_message == "ログアウトしました"
+    # 終了
+    driver.quit()
