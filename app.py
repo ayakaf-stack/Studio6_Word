@@ -9,7 +9,12 @@ from itsdangerous import URLSafeTimedSerializer, SignatureExpired, BadSignature
 from flask_mail import Mail, Message
 from dotenv import load_dotenv
 
-
+# ログインチェック用のコード
+def login_check():
+    if"user_id" not in session:
+        flash("ログインが必要です", "warning")
+        return redirect(url_for("login"))
+    return None
 
 load_dotenv()
 
@@ -219,9 +224,10 @@ def register():
 # マイページ
 @app.route('/mypage', methods=['GET'])
 def mypage():
-    if 'user_id' not in session:
-        flash('ログインが必要です')
-        return redirect(url_for('login'))
+    result = login_check()
+    if result:
+        return result
+    user_id = session["user_id"]
 
     user_id = session['user_id']
     user = User.query.get_or_404(user_id)
@@ -393,10 +399,10 @@ def contents():
 # 新規文章作成
 @app.route('/text-new/<int:id>', methods=['GET', 'POST'])
 def text_new(id):
-    user_id = session.get('user_id')
-    if not user_id:
-        flash("ログインが必要です", "warning")
-        return redirect(url_for('login'))
+    result = login_check()
+    if result:
+        return result
+    user_id = session["user_id"]
     
     word_id = id
     select_word = Word.query.get(word_id)
@@ -462,8 +468,10 @@ def text_edit(id):
 
     user_id = session.get('user_id')
     if not user_id:
-        flash("ログインが必要です", "warning")
-        return redirect(url_for('login'))
+        result = login_check()
+        if result:
+            return result
+        user_id = session["user_id"]
 
     if text.user_id != user_id:
         flash("他ユーザーの文章は編集できません", "error")
@@ -533,8 +541,10 @@ def text_delete(id):
 
     user_id = session.get('user_id')
     if not user_id:
-        flash("ログインが必要です", "warning")
-        return redirect(url_for('login'))
+        result = login_check()
+        if result:
+            return result
+        user_id = session["user_id"]
 
     if text.user_id != user_id:
         flash("他ユーザーの文章は削除できません", "error")
