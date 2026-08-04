@@ -277,6 +277,7 @@ footer,
     font-size: 1.1rem;
     color: var(--color-text);
     max-width: 480px;
+    display: inline-block;
     margin: 10px auto 0;
     line-height: 1.9;
     text-align: left;
