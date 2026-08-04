@@ -37,4 +37,9 @@ function showFlashMessage(message) {
     }
 
     container.innerHTML = `<div class="flash-message">${message}</div>`;
+
+    window.scrollTo({
+        top: 0,
+        behavior: "smooth"
+    });
 }

@@ -24,7 +24,7 @@
     <div id="word_area">
         <p><span id="word_text" class="value">{{ word.word }}</span></p>
         <p><span id="word_reading" class="value">【 {{ word.reading }} 】</span></p>
-        <p><span id="word_mean" class="value">{{ word.mean }}</span></p>
+        <p><span id="word_mean" class="value white-space">{{ word.mean }}</span></p>
 
         <div class="word_action">
             <form class="good-form" id="word_good_form" action="{{ url_for('good_word', word_id=word.id) }}" method="POST">
