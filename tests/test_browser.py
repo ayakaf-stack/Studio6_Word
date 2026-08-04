@@ -67,14 +67,14 @@ def test_login_to_mypage():
     h2_elements = driver.find_elements(By.TAG_NAME,"h2")
     assert h2_elements[0].text == "ログインユーザー：ozaki"
 
-    # ログアウト
+    # # ログアウト
     logout = driver.find_element(By.CLASS_NAME,"logout-btn")
     # ログアウトクリック
     logout.click()
 
 
     # 1秒停止
-    time.sleep(10)
+    time.sleep(1)
 
     # ログアウトメッセージ(flash)の取得
     main_element = driver.find_element(By.TAG_NAME,"main")
@@ -82,3 +82,127 @@ def test_login_to_mypage():
     assert flash_message == "ログアウトしました"
     # 終了
     driver.quit()
+
+
+# 新規登録画面表示テスト
+def test_show_register_page():
+
+    driver = webdriver.Chrome()
+
+    url = "http://127.0.0.1:5000/register"
+    driver.get(url)
+
+    time.sleep(1)
+
+    title = driver.find_element(By.TAG_NAME,"h1").text
+
+    assert title == "新規登録"
+
+    driver.quit()
+
+# ログイン後に退会画面表示テスト
+# def test_show_unregister_page():
+
+#     driver = webdriver.Chrome()
+
+#     # ログイン画面
+#     driver.get("http://127.0.0.1:5000/login")
+
+#     time.sleep(1)
+
+#     # メールアドレス入力
+#     mail = driver.find_element(By.ID, "mail")
+#     mail.send_keys("takujiozaki@gmail.com")
+
+#     # パスワード入力
+#     password = driver.find_element(By.ID, "Password")
+#     password.send_keys("abcd1234")
+
+#     # ログイン
+#     driver.find_element(By.TAG_NAME, "button").click()
+
+#     time.sleep(1)
+
+#     # 退会画面へ移動
+#     button = driver.find_elements(By.TAG_NAME, "a")
+#     assert button == "退会"
+
+#     for button in button:
+#         button.click()
+
+#     time.sleep(1)
+
+#     # 画面タイトル確認
+#     title = driver.find_element(By.TAG_NAME, "h1").text
+#     assert title == "退会画面"
+
+#     driver.quit()
+
+# ログイン後 マイページから退会画面表示テスト
+def test_show_unregister_page():
+
+    driver = webdriver.Chrome()
+
+    try:
+        # ログイン画面へアクセス
+        driver.get(
+            "http://127.0.0.1:5000/login"
+        )
+
+        time.sleep(1)
+
+        # メール入力
+        mail = driver.find_element(
+            By.ID,
+            "mail"
+        )
+        mail.send_keys(
+            "takujiozaki@gmail.com"
+        )
+
+        # パスワード入力
+        password = driver.find_element(
+            By.ID,
+            "Password"
+        )
+        password.send_keys(
+            "abcd1234"
+        )
+
+        # ログインボタン押下
+        driver.find_element(
+            By.TAG_NAME,
+            "button"
+        ).click()
+
+        time.sleep(1)
+
+
+        # マイページ確認
+        h1 = driver.find_element(
+            By.TAG_NAME,
+            "h1"
+        ).text
+
+        assert h1 == "マイページ"
+
+
+        # 退会リンククリック
+        driver.find_element(
+            By.LINK_TEXT,
+            "退会"
+        ).click()
+
+        time.sleep(1)
+
+
+        # 退会画面確認
+        h1 = driver.find_element(
+            By.TAG_NAME,
+            "h1"
+        ).text
+
+        assert h1 == "退会画面"
+
+    finally:
+        driver.quit()
