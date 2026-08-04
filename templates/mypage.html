@@ -12,7 +12,7 @@
         <div class="item">
             <h2>いいねした単語</h2>
             <div class="scroll_list">
-                <ul id="liked_list">
+                <ul id="liked_words_list">
                     {% for word in liked_words %}
                         <li class="good_word_item">
                             <form class="good-form" action="{{ url_for('good_word', word_id=word.id) }}" method="POST">
@@ -37,7 +37,7 @@
         <div class="item">
             <h2>いいねした文章</h2>
             <div class="scroll_list">
-                <ul id="liked_list">
+                <ul id="liked_texts_list">
                     {% for text in liked_texts %}
                         <li class="good_text_item">
                             <form class="good-form" action="{{ url_for('good_text', text_id=text.id) }}" method="POST">
@@ -55,8 +55,8 @@
                                         <span class="summary_text">{{ text.main_text | truncate(10, True, '...') }}</span>
                                         <span class="more_label">▶</span>
                                     </summary>
-                            <p class="drawer_content white-space">{{ text.main_text }}</p>
-                        </details>
+                                    <p class="drawer_content white-space">{{ text.main_text }}</p>
+                                </details>
                             </div>
                         </li>
                     {% endfor %}
@@ -71,9 +71,19 @@
                         <li class="my_text_item">
                             <div class="my_text_body">
                                 <p><span class="label">タイトル</span><span class="value">{{ text.title }}</span></p>
-                                <p><span class="label">文章本文</span><span class="value white-space">{{ text.main_text | truncate(15, True, '...') }}</span></p>
+                                
+                                {# 本文をドロワー形式に変更 #}
+                                <details class="text_drawer">
+                                    <summary class="drawer_btn">
+                                        <span class="label">文章本文</span>
+                                        <span class="summary_text">{{ text.main_text | truncate(10, True, '...') }}</span>
+                                        <span class="more_label">▶</span>
+                                    </summary>
+                                    <p class="drawer_content white-space">{{ text.main_text }}</p>
+                                </details>
+
                                 <p><span class="label">いいね数</span><span class="value">{{ good_count }}</span></p>
-                                <p><span class=" label">状態</span><span class="value">{{ '公開' if text.text_status == 0 else '非公開' }}</span></p>
+                                <p><span class="label">状態</span><span class="value">{{ '公開' if text.text_status == 0 else '非公開' }}</span></p>
 
                                 <a href="{{ url_for('text_edit', id=text.id) }}">編集</a>
                             </div>
