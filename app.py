@@ -235,13 +235,13 @@ def mypage():
     good_words = Good_word.query.filter_by(user_id=user_id).all()
     liked_words = []
     for gw in good_words:
-        word = Word.query.get(gw.word_id)
+        word = db.session.get(Word, gw.word_id)
         liked_words.append(word)
 
     good_texts = Good_text.query.filter_by(user_id=user_id).all()
     liked_texts = []
     for gt in good_texts:
-        text = Text.query.get(gt.text_id)
+        text = db.session.get(Text, gt.text_id)
         liked_texts.append(text)
 
     my_texts = Text.query.filter_by(user_id=user_id).all()
@@ -259,7 +259,7 @@ def mypage():
     )
 
 # ログアウト
-@app.route('/logout')
+@app.route('/logout', methods=['POST'])
 def logout():
     if 'user_id' in session:
         session.clear()
@@ -405,7 +405,7 @@ def text_new(id):
     user_id = session["user_id"]
     
     word_id = id
-    select_word = Word.query.get(word_id)
+    select_word = db.session.get(Word, word_id)
 
     if request.method == 'POST':
         title = request.form.get("title", "").strip()

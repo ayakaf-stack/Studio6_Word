@@ -13,7 +13,9 @@
 <div class="menu">
     {% if is_login %}
         <a href="/mypage">マイページ</a>
-        <a href="/logout">ログアウト</a>
+        <form action="{{ url_for('logout') }}" method="post" style="display: inline;">
+            <button type="submit" class="logout-btn">ログアウト</button>
+        </form>
     {% else %}
         <a href="/register">新規登録</a>
         <a href="/login">ログイン</a>
