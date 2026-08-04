@@ -1,5 +1,5 @@
 import os,re
-from random import choice
+from random import choice,shuffle
 from flask import Flask, render_template,redirect,session,flash,url_for,request,jsonify
 from models.models import Word,Genre,Word_genre,User,Text,Good_word,Good_text
 from models.extensions import db
@@ -65,6 +65,8 @@ def index():
         Text.text_status == 0
     ).all()
 
+    shuffle(texts)
+
     is_login = 'user_id' in session
 
     texts_items = []
@@ -100,12 +102,15 @@ def index():
             'texts': texts_items
         })
 
-    texts_contents = {text: (item['good_count'], item['is_good']) for text, item in zip(texts, texts_items)}
+    texts_contents = [
+        (text, item['good_count'], item['is_good']) 
+        for text, item in zip(texts, texts_items)
+    ]
 
     return render_template(
         'top.html',
         word=random_word,
-        text=texts_contents,
+        texts=texts_items,
         is_login=is_login,
         is_good=is_good,
         good_count=good_count
@@ -227,7 +232,6 @@ def mypage():
     result = login_check()
     if result:
         return result
-    user_id = session["user_id"]
 
     user_id = session['user_id']
     user = db.get_or_404(User, user_id)
@@ -297,7 +301,7 @@ def unregister():
         return redirect(url_for('index'))
 
      
-    user_name = session['user_name']
+    user_name = session.get('user_name', '')
     return render_template('unregister.html',user_name=user_name)
 
 
