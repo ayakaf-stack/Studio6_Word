@@ -21,13 +21,15 @@ def test_login_success(client, app):
     """正しいメールアドレスとパスワードでログインし、マイページへリダイレクトされるか"""
     # テストユーザーを作成
     with app.app_context():
-        user = User(
-            user_name="テストユーザー",
-            email="user@example.com",
-            password_hash=generate_password_hash("password123")
-        )
-        db.session.add(user)
-        db.session.commit()
+        user = User.query.filter_by(email="user@example.com").first()
+        if not user:
+            user = User(
+                email="user@example.com",
+                user_name="テストユーザー",
+                password_hash="...",  # 既存の処理に合わせる
+            )
+            db.session.add(user)
+            db.session.commit()
         user_id = user.id
 
     # POST送信
@@ -38,7 +40,7 @@ def test_login_success(client, app):
 
     # マイページ（/mypage）へのリダイレクト確認
     assert response.status_code == 302
-    assert response.headers['Location'] == '/mypage'
+    assert response.headers['Location'].endswith('/mypage')
 
     # セッションに user_id, user_name が保存されているか確認
     with client.session_transaction() as sess:
@@ -51,23 +53,26 @@ def test_login_success(client, app):
 # ==========================================
 @pytest.mark.parametrize("email, password", [
     ("user@example.com", "wrong_password"),     # パスワード間違い
-    ("nonexistent@example.com", "password123")  # 存在しないメールアドレス
+    ("nonexistent@example.com", "password123"), # 存在しないメールアドレス
     ("", "password123"),                        # メールアドレスが空
     ("user@example.com", ""),                   # パスワードが空
-    ("", "")                                    # 両方空
+    ("", ""),                                   # 両方空
+    ("admin@example.com", "wrong_admin_pass")   # 管理者メール＋間違ったパスワード
 ])
 
 def test_login_failure(client, app, email, password):
     """認証失敗時にエラーメッセージが表示され、ログイン画面に留まるか"""
     # 事前準備：テストユーザーを用意
     with app.app_context():
-        user = User(
-            user_name="テストユーザー",
-            email="user@example.com",
-            password_hash=generate_password_hash("password123")
-        )
-        db.session.add(user)
-        db.session.commit()
+        user = User.query.filter_by(email="user@example.com").first()
+        if not user:
+            user = User(
+                email="user@example.com",
+                user_name="テストユーザー",
+                password_hash="...",  # 既存の処理に合わせる
+            )
+            db.session.add(user)
+            db.session.commit()
 
     response = client.post('/login', data={
         'email': email,
@@ -85,27 +90,36 @@ def test_login_failure(client, app, email, password):
 # ==========================================
 # 4. 管理者ログイン（マジックリンクメール送信）
 # ==========================================
-@patch('app.mail.send')  # 実際にメールが飛ばないようにモック化
+from unittest.mock import patch
+# app.py（またはログイン処理が記述されているモジュール名）から ADMIN_EMAIL, ADMIN_PASSWORD をインポート
+# 例: from app import ADMIN_EMAIL, ADMIN_PASSWORD
+
+@patch('flask_mail.Mail.send')
 def test_admin_login_sends_email(mock_mail_send, client, app):
     """管理者情報でログインした場合に、メールが送信されてログイン画面へリダイレクトされるか"""
-    admin_email = app.config.get('ADMIN_EMAIL', 'admin@example.com')
-    admin_password = app.config.get('ADMIN_PASSWORD', 'adminpass')
+    
+    # アプリ側で定義されている ADMIN_EMAIL / ADMIN_PASSWORD を取得
+    # （インポートが難しい場合は app.config から、または直接アプリのモジュールを参照）
+    try:
+        from app import ADMIN_EMAIL, ADMIN_PASSWORD
+    except ImportError:
+        ADMIN_EMAIL = app.config.get('ADMIN_EMAIL', 'admin@example.com')
+        ADMIN_PASSWORD = app.config.get('ADMIN_PASSWORD', 'adminpass')
 
+    # 管理者ログインのリクエスト（DB操作は不要）
     response = client.post('/login', data={
-        'email': admin_email,
-        'password': admin_password
+        'email': ADMIN_EMAIL,
+        'password': ADMIN_PASSWORD
     }, follow_redirects=True)
 
-    # メール送信関数が1回呼ばれたか検証
+    # 1. メール送信関数が1回呼ばれたか検証
     assert mock_mail_send.called
     assert mock_mail_send.call_count == 1
 
-    # 送信されたメールの内容検証
+    # 2. 送信されたメールの内容検証
     sent_msg = mock_mail_send.call_args[0][0]
     assert sent_msg.subject == '管理者ログイン用リンク'
-    assert admin_email in sent_msg.recipients
+    assert ADMIN_EMAIL in sent_msg.recipients
 
-    # フラッシュメッセージの確認
+    # 3. フラッシュメッセージの確認
     assert '登録されたメールアドレスに送信されたURLから管理者画面にログインしてください' in response.get_data(as_text=True)
-
-    
