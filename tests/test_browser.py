@@ -145,62 +145,38 @@ def test_show_unregister_page():
 
     try:
         # ログイン画面へアクセス
-        driver.get(
-            "http://127.0.0.1:5000/login"
-        )
+        driver.get("http://127.0.0.1:5000/login")
 
         time.sleep(1)
 
         # メール入力
-        mail = driver.find_element(
-            By.ID,
-            "mail"
-        )
-        mail.send_keys(
-            "takujiozaki@gmail.com"
-        )
+        mail = driver.find_element(By.ID,"mail")
+        mail.send_keys("takujiozaki@gmail.com")
 
         # パスワード入力
-        password = driver.find_element(
-            By.ID,
-            "Password"
-        )
-        password.send_keys(
-            "abcd1234"
-        )
+        password = driver.find_element(By.ID,"Password")
+        password.send_keys("abcd1234")
 
         # ログインボタン押下
-        driver.find_element(
-            By.TAG_NAME,
-            "button"
-        ).click()
+        driver.find_element(By.TAG_NAME,"button").click()
 
         time.sleep(1)
 
 
         # マイページ確認
-        h1 = driver.find_element(
-            By.TAG_NAME,
-            "h1"
-        ).text
+        h1 = driver.find_element(By.TAG_NAME,"h1").text
 
         assert h1 == "マイページ"
 
 
         # 退会リンククリック
-        driver.find_element(
-            By.LINK_TEXT,
-            "退会"
-        ).click()
+        driver.find_element(By.LINK_TEXT,"退会").click()
 
         time.sleep(1)
 
 
         # 退会画面確認
-        h1 = driver.find_element(
-            By.TAG_NAME,
-            "h1"
-        ).text
+        h1 = driver.find_element(By.TAG_NAME,"h1").text
 
         assert h1 == "退会画面"
 
