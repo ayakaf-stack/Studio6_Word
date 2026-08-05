@@ -82,9 +82,7 @@ def test_index_good_count_matches_db(client):
     data = _get_index_json(client)
     word_id = data["word"]["id"]
  
-    with app.app_context():
-        expected_count = Good_word.query.filter_by(word_id=word_id).count()
- 
+    expected_count = Good_word.query.filter_by(word_id=word_id).count()
     assert data["good_count"] == expected_count
  
  
@@ -101,7 +99,7 @@ def test_index_is_good_matches_db_when_logged_in(login_client):
  
     with app.app_context():
         expected = Good_word.query.filter_by(word_id=word_id, user_id=14).first() is not None
- 
+
     assert data["is_good"] == expected
  
  
