@@ -2,16 +2,16 @@ document.addEventListener("DOMContentLoaded", () => {
     const nextBtn = document.getElementById("next_word_btn");
     const INITIAL_BACKGROUND_COLOR = "#062c54";
 
-        // 暗めのランダム背景色を生成する関数（色は戻すだけ）
-        function generateRandomDarkColor() {
-        // 色相(H): 0〜360度（全色相からランダムに選ぶ）
+    // 暗めのランダム背景色を生成する関数（金色の視認性を高めるため背景を暗めに固定）
+    function generateRandomDarkColor() {
+        // 色相(H): 0〜360度（全色相から選ぶ）
         const h = Math.floor(Math.random() * 360);
 
-        // 彩度(S): 20%〜35%
+        // 彩度(S): 20%〜35%（鮮やかさを抑える）
         const s = Math.floor(Math.random() * 16) + 20; 
 
-        // 輝度(L): 20%〜35%
-        const l = Math.floor(Math.random() * 16) + 20;
+        // 輝度(L): 10%〜18%（背景をしっかり暗くして金色のコントラストを上げる）
+        const l = Math.floor(Math.random() * 10) + 15;
 
         return `hsl(${h}, ${s}%, ${l}%)`;
     }

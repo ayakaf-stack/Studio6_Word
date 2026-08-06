@@ -1,8 +1,5 @@
 @charset "UTF-8";
 
-html {
-  background-color: #062c54;
-}
 
 h2 {
   color: white;
@@ -181,6 +178,13 @@ li {
   word-break: break-word;
 }
 
+.empty_message {
+    color: #8ea2ab;
+    font-size: 0.95rem;
+    text-align: center;
+    padding: 2rem 1rem;
+}
+
 /* 下部メニュー */
 .menu {
   width: 100%;
@@ -221,3 +225,4 @@ li {
     max-height: 500px;
   }
 }
+
