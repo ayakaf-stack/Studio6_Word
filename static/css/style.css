@@ -3,11 +3,8 @@
 html {
   color: white;
   font-family:"ヒラギノ明朝 ProN", "Hiragino Mincho ProN", serif;
-  margin: 0;
-	padding: 0;
 	box-sizing: border-box;
   text-align: center;
-  min-height: 100vh;
 }
 
 body {
@@ -15,10 +12,15 @@ body {
   background: var(--color-bg);
   color: var(--color-text);
   font-family: var(--font-body);
-  margin: 0;
-  padding: 40px 20px 80px;
   line-height: 1.8;
 }  
+
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  min-height: 100vh;
+}
 
 *, *::before, *::after {
   box-sizing:border-box;
@@ -33,7 +35,7 @@ body {
 .header {
   position: relative;
   padding-bottom: 18px;
-  margin: 0 0 28px;
+  margin: 28px 0 28px;
   text-align: center;
   font-size: 2rem;
 }
@@ -154,74 +156,58 @@ main > p {
   clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
 }
 
+.logout-btn {
+  background: none;
+  border: none;
+  color: #c99a4a;
+  font: inherit;
+  cursor: pointer;
+  padding: 0;
+  text-decoration: none;
+  transition: 0.3s;
+}
+
+.logout-btn:hover {
+  opacity: 0.7;
+}
+
 .white-space {
   white-space: pre-wrap;
 }
 
+/* サイトタイトル */
 a.site_title {
   position: relative;
-  padding: 12px 64px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  margin: 20px auto 10px;
+  padding: 0 10px;
   font-family: 'Noto Serif JP', serif;
-  font-size: 28px;
-  letter-spacing: 0.24em;
+  font-size: 26px;
+  letter-spacing: 0.28em;
   color: white;
   font-weight: 400;
-  display: inline-block;
-  box-sizing: border-box;
-  max-width: 520px;
-  text-align: center; 
-  margin: 24px;
-  margin-inline: auto;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
 }
 
-.site_title::before, .site_title::after {
-  content:'';
-  position: absolute;
-  background: rgba(201, 154, 74, 0.7);
-  width: 55px;
+a.site_title::before,
+a.site_title::after {
+  content: '';
+  width: 40px;
   height: 1px;
-  rotate: -65deg;
+  background: rgba(201, 154, 74, 0.6);
   display: inline-block;
 }
 
-.site_title::before {
-  top: 35%;
-  left: 0;
-}
-
-.site_title::after {
-  bottom: 35%;
-  right: 0;
-}
-
-.site_title span::before, .site_title span::after {
-  content:'';
-  position: absolute;
-  background: rgba(201, 154, 74, 0.7);
-  width: 35px;
-  height: 1px;
+a.site_title span {
   display: inline-block;
 }
 
-.site_title span::before {
-  left: 30px;
-  top: 4px;
-}
-
-.site_title span::after {
-  right: 30px;
-  bottom: 4px;
-}
-
-a.site_title {
-  text-shadow: 
-  0 0.5px 1px rgba(0, 0, 0, 0.8),
-  0 0 1px rgba(0, 0, 0, 0.9);
-}
-
-.site_title::before, .site_title::after,
-.site_title span::before, .site_title span::after {
-  box-shadow: 0 0.5px 1px rgba(0, 0, 0, 0.5);
+a.site_title span::before,
+a.site_title span::after {
+  display: none;
 }
 
 body {
@@ -263,23 +249,28 @@ body::after {
   right: 50px;
 }
 
-.logout-btn {
-  background: none;
-  border: none;
-  color: #c99a4a;
-  font: inherit;
-  cursor: pointer;
-  padding: 0;
-  text-decoration: none;
-  transition: 0.3s;
-}
+html::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: -9999;
+  pointer-events: none;
 
-.logout-btn:hover {
-  opacity: 0.7;
+  /* 画像設定 */
+  background-image: url('../images/IMG_4712.PNG');
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: cover;
+
+  /* オーバーレイの設定 */
+  opacity: 0.2;
+  mix-blend-mode: overlay;
 }
 
 /* レスポンシブ対応 */
-
 @media (max-width: 768px) {
   body {
     font-size: 1.1rem;

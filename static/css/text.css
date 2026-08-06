@@ -1,20 +1,16 @@
 @charset "UTF-8";
 
-html {
-  background-color: #062c54;
-}
-
 h3 {
   font-size: 1.2rem;
 }
 
 .form-group {
-    display:flex;
-    justify-content: center;
-    gap: 2rem;
-    margin-bottom: 2rem;
-    align-items: center;
-    margin-right: 80px;
+  display:flex;
+  justify-content: center;
+  gap: 2rem;
+  margin-bottom: 2rem;
+  align-items: center;
+  margin-right: 80px;
 }
 
 .form-group label {
