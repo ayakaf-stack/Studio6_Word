@@ -168,4 +168,3 @@ def test_register_duplicate_email(client):
     html = response.get_data(as_text=True)
 
     assert "既に登録済みのメールアドレスか不正なメールアドレスです" in html
-
