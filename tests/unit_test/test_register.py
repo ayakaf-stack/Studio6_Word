@@ -1,6 +1,7 @@
 import pytest
 from werkzeug.security import check_password_hash
 from app import app, db, User
+from random import randint
 
 @pytest.fixture
 def client():
@@ -21,9 +22,13 @@ def test_register_get(client):
 
 # 登録完了(POST) メールアドレスを変えてテストする
 def test_register_success(client):
+
+    name = f"testuser{randint(1,10000)}"
+    email = f"testuser{randint(1,10000)}@test.com"
+
     response = client.post("/register", data={
-        "user_name": "testuser",
-        "email": "testuser@test.com",
+        "user_name": name,
+        "email": email,
         "password": "password123"
     })
 
@@ -31,13 +36,19 @@ def test_register_success(client):
     assert "/login" in response.location
 
 
-# DBに登録されたことを確認
     user = User.query.filter_by(
-        email="test_user@test.com"
+        email=email
     ).first()
 
     assert user is not None
-    assert user.user_name == "test_user"
+    assert user.user_name == name
+
+    with app.app_context():
+        user = User.query.filter_by(user_name=name).first()
+
+        db.session.delete(user)
+        db.session.commit()
+
 
 
 # ユーザー名未入力チェック
@@ -157,9 +168,19 @@ def test_register_password_over_16(client):
 
 # 重複メールアドレス
 def test_register_duplicate_email(client):
+
+    name = f"testuser{randint(1,10000)}"
+    email = f"testuser{randint(1,10000)}@test.com"
+
     response = client.post("/register", data={
-        "user_name" : "new_user",
-        "email" : "test@test.com",
+        "user_name": name,
+        "email": email,
+        "password": "password123"
+    })
+
+    response = client.post("/register", data={
+        "user_name" : name,
+        "email" : email,
         "password" : "password123"
     }, follow_redirects=True)
 
@@ -168,3 +189,9 @@ def test_register_duplicate_email(client):
     html = response.get_data(as_text=True)
 
     assert "既に登録済みのメールアドレスか不正なメールアドレスです" in html
+
+    with app.app_context():
+        user = User.query.filter_by(user_name=name).first()
+
+        db.session.delete(user)
+        db.session.commit()
