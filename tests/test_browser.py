@@ -100,43 +100,6 @@ def test_show_register_page():
 
     driver.quit()
 
-# ログイン後に退会画面表示テスト
-# def test_show_unregister_page():
-
-#     driver = webdriver.Chrome()
-
-#     # ログイン画面
-#     driver.get("http://127.0.0.1:5000/login")
-
-#     time.sleep(1)
-
-#     # メールアドレス入力
-#     mail = driver.find_element(By.ID, "mail")
-#     mail.send_keys("takujiozaki@gmail.com")
-
-#     # パスワード入力
-#     password = driver.find_element(By.ID, "Password")
-#     password.send_keys("abcd1234")
-
-#     # ログイン
-#     driver.find_element(By.TAG_NAME, "button").click()
-
-#     time.sleep(1)
-
-#     # 退会画面へ移動
-#     button = driver.find_elements(By.TAG_NAME, "a")
-#     assert button == "退会"
-
-#     for button in button:
-#         button.click()
-
-#     time.sleep(1)
-
-#     # 画面タイトル確認
-#     title = driver.find_element(By.TAG_NAME, "h1").text
-#     assert title == "退会画面"
-
-#     driver.quit()
 
 # ログイン後 マイページから退会画面表示テスト
 def test_show_unregister_page():

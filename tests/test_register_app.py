@@ -10,6 +10,7 @@ def client():
         with app.app_context():
             yield client
 
+
 # 登録画面(GET)
 def test_register_get(client):
     response = client.get("/register")
@@ -20,7 +21,6 @@ def test_register_get(client):
 
 # 登録完了(POST)
 def test_register_success(client):
-
     response = client.post("/register", data={
         "user_name": "test_user",
         "email": "test_user@test.com",
@@ -30,6 +30,7 @@ def test_register_success(client):
     assert response.status_code == 302
     assert "/register" in response.location
 
+
 # DBに登録されたことを確認
     user = User.query.filter_by(
         email="test_user@test.com"
@@ -38,65 +39,120 @@ def test_register_success(client):
     assert user is not None
     assert user.user_name == "test_user"
 
+
 # ユーザー名未入力チェック
-def test_register_user_name(client):
-    response = client.post("/register", date={
-        "user_name" : "",
-        "email" : "test@test.com",
-        "password" : "password123"
-    })
+def test_register_empty_user_name(client):
 
-    assert response.status_code == 302
-    assert "/register" in response.location
+    response = client.post("/register", data={
+        "user_name": "",
+        "email": "test@test.com",
+        "password": "password123"
+    }, follow_redirects=True)
 
-# メールアドレス未入力
+    assert response.status_code == 200
+
+    html = response.get_data(as_text=True)
+
+    # Flashメッセージ確認
+    assert "全ての項目を正しく入力してください" in html
+
+
+# メールアドレス未入力チェック
 def test_register_empty_email(client):
 
     response = client.post("/register", data={
-        "user_name" : "test_user",
-        "email" : "",
-        "passwprd" : "password123"
-    })
+        "user_name": "test_user",
+        "email": "",
+        "password": "password123"
+    }, follow_redirects=True)
 
-    assert response.status_code == 302
-    assert "/register" in response.location
+    assert response.status_code == 200
 
-# パスワード未入力
+    html = response.get_data(as_text=True)
+
+    # Flashメッセージ確認
+    assert "全ての項目を正しく入力してください" in html
+
+
+# パスワード未入力チェック
 def test_register_empty_password(client):
 
     response = client.post("/register", data={
-        "user_name" : "test_user",
-        "email" : "test@test.com",
-        "password" : ""
-    })
+        "user_name": "test_user",
+        "email": "test@test.com",
+        "password": ""
+    }, follow_redirects=True)
 
-    assert response.status_code == 302
-    assert "/register" in response.location
+    html = response.get_data(as_text=True)
 
-# Flashメッセージ
-def test_register_empty_flash(client):
-
-    response = client.post("/register", data={
-        "user_name" : "",
-        "email" : "",
-        "password" : ""
-    })
-
-    html = response.data.decode("utf-8")
-
+    # 未入力エラーのFlashメッセージ確認
     assert "全ての項目を正しく入力してください" in html
 
 
 # ユーザー名255文字以上
+def test_register_user_name_over_255(client):
+
+    response = client.post("/register", data={
+        "user_name": "a" * 256,
+        "email": "test@test.com",
+        "password": "password123"
+    })
+
+    # 登録画面へリダイレクト
+    assert response.status_code == 302
+    assert "/register" in response.location
+
+    # フラッシュメッセージ確認
+    with client.session_transaction() as session:
+        assert "ユーザー名は255文字以内で入力してください" in session["_flashes"][0][1]
 
 
 # 不正なメールアドレス
+def test_register_invalid_email(client):
+    response = client.post("/register", data={
+        "user_name" : "test_user",
+        "email" : "test@test",
+        "password" : "password123"
+    }, follow_redirects=True)
+
+    assert response.status_code == 200
+    html = response.get_data(as_text=True)
+
+    # フラッシュメッセージ確認
+    assert "既に登録済みのメールアドレスか不正なメールアドレスです" in html
 
 
 # パスワード8文字未満
+def test_register_password_less_than_8(client):
 
+    response = client.post("/register", data={
+        "user_name": "test_user",
+        "email": "password_less8@test.com",
+        "password": "1234567"  # 7文字
+    }, follow_redirects=True)
 
-# パスワード16文字以上
+    assert response.status_code == 200
+
+    html = response.get_data(as_text=True)
+
+    # Flashメッセージ確認
+    assert "パスワードは8文字以上16文字以内で入力してください" in html
+
+# パスワード17文字以上
+def test_register_password_over_16(client):
+
+    response = client.post("/register", data={
+        "user_name": "test_user",
+        "email": "password_over16@test.com",
+        "password": "12345678901234567"  # 17文字
+    }, follow_redirects=True)
+
+    assert response.status_code == 200
+
+    html = response.get_data(as_text=True)
+
+    # Flashメッセージ確認
+    assert "パスワードは8文字以上16文字以内で入力してください" in html
 
 
 # 重複メールアドレス
