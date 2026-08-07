@@ -12,6 +12,9 @@ from app import app as flask_app
 from models.extensions import db
 from models.models import User
 
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+
 
 
 # 親(tests/conftest.py)のfixtureを無効化
@@ -159,5 +162,9 @@ def logged_in_driver(driver, base_url, test_user):
     driver.find_element("name", "email").send_keys(test_user["email"])
     driver.find_element("name", "password").send_keys(test_user["password"])
     driver.find_element("css selector", "button[type='submit']").click()
+
+    # ログイン処理(POST /login → リダイレクト)が完了するまで待つ
+    WebDriverWait(driver, 5).until(EC.url_contains("/mypage"))
+
 
     return driver
