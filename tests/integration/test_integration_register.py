@@ -1,6 +1,10 @@
 from selenium.webdriver.common.by import By
 import time
 import uuid
+from app import app as flask_app
+from models.extensions import db
+from models.models import User
+
 
 # 新規登録画面表示
 def test_show_register_page(driver, base_url):
@@ -16,12 +20,12 @@ def test_show_register_page(driver, base_url):
 
 
 # 正常登録
-def test_show_register_success(driver, base_url):
+def test_show_register_success(driver, base_url,test_user):
     url = f"{base_url}/register"
 
     driver.get(url)
 
-    user_name = f"test_{uuid.uuid4(). hex}user"
+    user_name = f"test_user_{uuid.uuid4(). hex}"
     email = f"test_{uuid.uuid4(). hex}@ezample.com"
     password = f"password{uuid.uuid4(). hex}"
 
@@ -53,6 +57,14 @@ def test_show_register_success(driver, base_url):
 
     # ログイン画面へ遷移確認
     assert "/login" in driver.current_url
+
+    with flask_app.app_context():
+        user = db.session.get(User, User.query.filter_by(email=email).first().id)
+        print(f"\n[DEBUG] データベースから取得したユーザー: {user}")
+        if user is not None:
+            db.session.delete(user)
+            db.session.commit()
+        db.session.remove()
 
 
 # 空欄エラー
