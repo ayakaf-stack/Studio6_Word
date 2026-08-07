@@ -54,10 +54,36 @@ def test_login_success(driver, base_url, test_user):
 """
 空欄エラー
 """
-def test_login_empty(driver, base_url):
+# メールアドレスが未入力
+def test_login_empty_email(driver, base_url, test_user):
     url = f"{base_url}/login"
 
     driver.get(url)
+
+    driver.find_element(
+            By.NAME,
+            "password"
+        ).send_keys("password")
+
+    time.sleep(1)
+
+    driver.find_element(
+            By.CSS_SELECTOR,
+            "button[type='submit']"
+        ).click()
+
+    time.sleep(2)
+
+# パスワードが未入力
+def test_login_empty_password(driver, base_url, test_user):
+    url = f"{base_url}/login"
+
+    driver.get(url)
+
+    driver.find_element(
+            By.NAME,
+            "email"
+        ).send_keys("email@email.com")
 
     time.sleep(1)
 
@@ -72,33 +98,6 @@ def test_login_empty(driver, base_url):
 """
 整合性エラー
 """
-# passwordが違う時
-def test_login_wrong_password(driver, base_url, test_user):
-    url = f"{base_url}/login"
-
-    driver.get(url)
-
-    email = test_user["email"]
-
-    driver.find_element(
-            By.NAME,
-            "email"
-        ).send_keys(email)
-
-    driver.find_element(
-            By.NAME,
-            "password"
-        ).send_keys("password")
-    
-    time.sleep(2)
-
-    driver.find_element(
-            By.CSS_SELECTOR,
-            "button[type='submit']"
-        ).click()
-
-    time.sleep(2)
-
 # メールアドレスが違う時
 def test_login_wrong_email(driver, base_url, test_user):
     url = f"{base_url}/login"
@@ -116,6 +115,33 @@ def test_login_wrong_email(driver, base_url, test_user):
             By.NAME,
             "password"
         ).send_keys(password)
+    
+    time.sleep(2)
+
+    driver.find_element(
+            By.CSS_SELECTOR,
+            "button[type='submit']"
+        ).click()
+
+    time.sleep(2)
+
+# パスワードが違う時
+def test_login_wrong_password(driver, base_url, test_user):
+    url = f"{base_url}/login"
+
+    driver.get(url)
+
+    email = test_user["email"]
+
+    driver.find_element(
+            By.NAME,
+            "email"
+        ).send_keys(email)
+
+    driver.find_element(
+            By.NAME,
+            "password"
+        ).send_keys("password")
     
     time.sleep(2)
 
