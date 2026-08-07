@@ -29,7 +29,6 @@ SECRET_KEY = os.getenv('SECRET_KEY')
 ADMIN_EMAIL = os.getenv('ADMIN_EMAIL')
 ADMIN_PASSWORD = os.getenv('ADMIN_PASSWORD')
 
-
 app.config["SQLALCHEMY_DATABASE_URI"] = (
     f"mysql+pymysql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}/{DB_NAME}")
 
@@ -99,7 +98,8 @@ def index():
             },
             'is_good': is_good,
             'good_count': good_count,
-            'texts': texts_items
+            'texts': texts_items,
+            'is_login': is_login
         })
 
     texts_contents = [

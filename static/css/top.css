@@ -179,6 +179,13 @@ a[href="/contents"] {
     margin: 10px auto 0;
 }
 
+.no-text-message {
+    color: #8ea2ab;
+    font-size: 1rem;
+    text-align: center;
+    padding: 2rem 1rem;
+}
+
 /* フォーム・いいね */
 .good-form {
     display: inline-flex;

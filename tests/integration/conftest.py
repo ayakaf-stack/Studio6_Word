@@ -125,6 +125,7 @@ def _create_test_user():
         db.session.add(user)
         db.session.commit()
         user_id = user.id
+        db.session.expunge_all()
         db.session.remove()
     return user_id, email
 

@@ -4,28 +4,58 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // 暗めのランダム背景色を生成する関数（金色の視認性を高めるため背景を暗めに固定）
     function generateRandomDarkColor() {
-        // 色相(H): 0〜360度（全色相から選ぶ）
         const h = Math.floor(Math.random() * 360);
-
-        // 彩度(S): 20%〜35%（鮮やかさを抑える）
         const s = Math.floor(Math.random() * 16) + 20; 
-
-        // 輝度(L): 10%〜18%（背景をしっかり暗くして金色のコントラストを上げる）
         const l = Math.floor(Math.random() * 10) + 15;
-
         return `hsl(${h}, ${s}%, ${l}%)`;
     }
 
-    // ★ ポイント2: 背景色を適用する関数（フェードさせるため少し遅らせる）
     function applyBackgroundColor(color) {
         setTimeout(() => {
             document.body.style.backgroundColor = color;
         }, 100); 
     }
 
+    // ★ 未ログイン時の文章作成クリック制御
+    function setupTextNewLinkHandler() {
+        const textNewLink = document.getElementById("text_new_link");
+        if (textNewLink) {
+            textNewLink.addEventListener("click", (e) => {
+                const isLogin = textNewLink.getAttribute("data-login") === "true";
+                if (!isLogin) {
+                    e.preventDefault(); // 画面遷移をブロック
+                    // good.js で定義されている共通のフラッシュメッセージ関数を呼び出す
+                    showFlashMessage('文章作成機能を使うには<a href="/login">ログイン</a>してください');
+                }
+            });
+        }
+    }
+
+    // 初回読み込み時の設定
+    setupTextNewLinkHandler();
+
     nextBtn.addEventListener("click", async () => {
-        // ② 「次へ」ボタンを押した時
-        // ランダムな暗い色を生成して適用
+        // ...（次へボタンのAjax処理）...
+        
+        // ★ Ajaxで単語が切り替わった後、新しく生成されたリンクのログイン状態も更新
+        const textNewLink = document.getElementById("text_new_link");
+        textNewLink.href = `/text-new/${data.word.id}`;
+        if (data.is_login !== undefined) {
+            textNewLink.setAttribute("data-login", data.is_login ? "true" : "false");
+        }
+
+        // ...（文章一覧の書き換え処理など）...
+
+        // ★ 再構築されたリンクにイベントを再バインド
+        setupTextNewLinkHandler();
+    });
+
+
+    // 初回読み込み時の設定
+    setupTextNewLinkHandler();
+
+
+    nextBtn.addEventListener("click", async () => {
         const nextColor = generateRandomDarkColor();
         applyBackgroundColor(nextColor);
         const response = await fetch("/", {
@@ -46,7 +76,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
         wordForm.querySelector(".good-count").textContent = data.good_count;
 
-        document.getElementById("text_new_link").href = `/text-new/${data.word.id}`;
+        // ★ Ajaxで切り替わった後も data-login 属性を維持して href を更新
+        // ※バックエンドの jsonify に is_login を含める必要があります（後述）
+        const textNewLink = document.getElementById("text_new_link");
+        textNewLink.href = `/text-new/${data.word.id}`;
+        // data.is_login が渡ってくる前提で属性を再設定
+        if (data.is_login !== undefined) {
+            textNewLink.setAttribute("data-login", data.is_login ? "true" : "false");
+        }
 
         // 文章一覧を書き換え(見出し + スクロール枠を復元)
         const textListArea = document.getElementById("text_list_area");
@@ -79,5 +116,8 @@ document.addEventListener("DOMContentLoaded", () => {
             `;
             scrollList.appendChild(div);
         });
+        
+        // ★ AjaxでHTMLが再構築されるため、再バインドを実行
+        setupTextNewLinkHandler();
     });
 });
