@@ -58,7 +58,7 @@ def test_index_ajax_returns_json_with_expected_keys(client):
     assert response.content_type.startswith("application/json")
  
     data = response.get_json()
-    assert set(data.keys()) == {"word", "is_good", "good_count", "texts"}
+    assert set(data.keys()) == {"word", "is_good", "is_login", "good_count", "texts"}
     assert set(data["word"].keys()) == {"id", "word", "reading", "mean"}
     assert isinstance(data["texts"], list)
  
